@@ -79,7 +79,7 @@ class MixFormer(BaseTracker):
         pred_box = (pred_boxes.mean(dim=0) * self.params.search_size / resize_factor).tolist()  # (cx, cy, w, h) [0,1]
         # get the final box result
         self.state = clip_box(self.map_box_back(pred_box, resize_factor), H, W, margin=10)
-        print(self.state)
+        # print(self.state)
         # update template
         for idx, update_i in enumerate(self.update_intervals):
             if self.frame_id % update_i == 0:
@@ -98,9 +98,11 @@ class MixFormer(BaseTracker):
             '''save all predictions'''
             all_boxes = self.map_box_back_batch(pred_boxes * self.params.search_size / resize_factor, resize_factor)
             all_boxes_save = all_boxes.view(-1).tolist()  # (4N, )
+            print("Case 1|", self.state)
             return {"target_bbox": self.state,
                     "all_boxes": all_boxes_save}
         else:
+            print("Case 2|", self.state)
             return {"target_bbox": self.state}
 
     def map_box_back(self, pred_box: list, resize_factor: float):

@@ -127,21 +127,21 @@ class Tracker:
 
         # Initialize
         image = self._read_image(seq.frames[0])
-
+        print("reached here - 95")
         start_time = time.time()
         out = tracker.initialize(image, init_info)
         if out is None:
             out = {}
-
+        print("reached here - 96")
         prev_output = OrderedDict(out)
         init_default = {'target_bbox': init_info.get('init_bbox'),
                         'time': time.time() - start_time}
         if tracker.params.save_all_boxes:
             init_default['all_boxes'] = out['all_boxes']
             init_default['all_scores'] = out['all_scores']
-
+        print("reached here - 97")
         _store_outputs(out, init_default)
-
+        print("reached here - 98")
         for frame_num, frame_path in enumerate(seq.frames[1:], start=1):
             image = self._read_image(frame_path)
 

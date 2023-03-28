@@ -5,8 +5,8 @@
 
 ##########-------------- MixViT-B -----------------##########
 ### LaSOT test and evaluation
-python tracking/test.py mixformer_vit_online baseline --dataset lasot --threads 32 --num_gpus 8 --params__model mixformer_vit_base_online.pth.tar --params__search_area_scale 5.05
-python tracking/analysis_results.py --dataset_name lasot --tracker_param baseline
+# python tracking/test.py mixformer_vit_online baseline --dataset lasot --threads 32 --num_gpus 8 --params__model mixformer_vit_base_online.pth.tar --params__search_area_scale 5.05
+# python tracking/analysis_results.py --dataset_name lasot --tracker_param baseline
 
 ### TrackingNet test and pack
 # python tracking/test.py mixformer_vit_online baseline --dataset trackingnet --threads 32 --num_gpus 8 --params__model mixformer_vit_base_online.pth.tar
@@ -35,7 +35,7 @@ python tracking/analysis_results.py --dataset_name lasot --tracker_param baselin
 # python lib/test/utils/transform_trackingnet.py --tracker_name mixformer_vit_online --cfg_name baseline_large
 
 ### GOT10k test and pack
-# python tracking/test.py mixformer_vit_online baseline_large --dataset got10k_test --threads 32 --num_gpus 8 --params__model mixformer_vit_large_online_got.pth.tar
+python tracking/test.py mixformer_vit_online baseline_large --dataset got10k_test --threads 8 --num_gpus 1 --params__model mixformer_vit_large_online_got.pth.tar
 # python lib/test/utils/transform_got10k.py --tracker_name mixformer_vit_online --cfg_name baseline_large
 
 ### UAV123

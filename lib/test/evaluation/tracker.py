@@ -144,12 +144,13 @@ class Tracker:
         print("reached here - 98")
         print(seq.frames[1:])
         for frame_num, frame_path in enumerate(seq.frames[1:], start=1):
-            print(frame_num, frame_path, [key for key in seq.frame_info])
+            # print(frame_num, frame_path, [key for key in seq.frame_info])
             image = self._read_image(frame_path)
 
             start_time = time.time()
 
             info = seq.frame_info(frame_num)
+            print(info)
             info['previous_output'] = prev_output
 
             out = tracker.track(image, info)

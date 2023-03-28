@@ -68,6 +68,7 @@ class MixFormer(BaseTracker):
         x_patch_arr, resize_factor, x_amask_arr = sample_target(image, self.state, self.params.search_factor,
                                                                 output_sz=self.params.search_size)  # (x1, y1, w, h)
         search = self.preprocessor.process(x_patch_arr)
+        print(x_patch_arr.shape, resize_factor, x_amask_arr.shape, x_patch_arr.shape, search.shape, self.template.shape, self.online_template.shape)
         with torch.no_grad():
             out_dict, _ = self.network(self.template, self.online_template, search)
 

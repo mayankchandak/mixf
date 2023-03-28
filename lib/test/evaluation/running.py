@@ -25,7 +25,7 @@ def _save_tracker_output(seq: Sequence, tracker: Tracker, output: dict):
 
     def save_bb(file, data):
         tracked_bb = np.array(data).astype(int)
-        np.savetxt(file, tracked_bb, delimiter='\t', fmt='%d')
+        np.savetxt(file, tracked_bb, delimiter=',', fmt='%f')
 
     def save_time(file, data):
         exec_times = np.array(data).astype(float)
@@ -134,9 +134,9 @@ def run_sequence(seq: Sequence, tracker: Tracker, debug=False, num_gpu=8):
     else:
         try:
             output = tracker.run_sequence(seq, debug=debug)
-            print("Successful |", output)
+            # print("Successful |", output)
         except Exception as e:
-            print("Failure |", e)
+            # print("Failure |", e)
             return
 
     sys.stdout.flush()

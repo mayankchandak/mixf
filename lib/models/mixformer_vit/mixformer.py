@@ -264,7 +264,7 @@ def get_mixformer_vit(config, train):
             norm_layer=partial(nn.LayerNorm, eps=1e-6), drop_path_rate=0.1)
     else:
         raise KeyError(f"VIT_TYPE shoule set to 'large_patch16' or 'base_patch16'")
-    print("reached here in mixformer_vit 14")
+    # print("reached here in mixformer_vit 14")
     # if config.MODEL.BACKBONE.PRETRAINED and train:
     #     ckpt_path = config.MODEL.BACKBONE.PRETRAINED_PATH
     #     ckpt = torch.load(ckpt_path, map_location='cpu')['model']
@@ -278,7 +278,7 @@ def get_mixformer_vit(config, train):
     #         print("missing keys:", missing_keys)
     #         print("unexpected keys:", unexpected_keys)
     #         print("Loading pretrained ViT done.")
-    print("reached here in mixformer_vit 15")
+    # print("reached here in mixformer_vit 15")
     return vit
 
 
@@ -338,9 +338,9 @@ class MixFormer(nn.Module):
 
 def build_mixformer_vit(cfg, train=True) -> MixFormer:
     backbone = get_mixformer_vit(cfg, train)  # backbone without positional encoding and attention mask
-    print("reached here in mixformer_vit 11")
+    # print("reached here in mixformer_vit 11")
     box_head = build_box_head(cfg)  # a simple corner head
-    print("reached here in mixformer_vit 12")
+    # print("reached here in mixformer_vit 12")
     model = MixFormer(
         backbone,
         box_head,

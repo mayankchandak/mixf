@@ -58,12 +58,12 @@ def main():
     for param in list(filter(lambda s: s.split('__')[0] == 'params' and getattr(args, s) != None, args.__dir__())):
         tracker_params[param.split('__')[1]] = getattr(args, param)
     print("Tracker params |", tracker_params)
+    # Tracker params | {'model': 'mixformer_vit_large.pth', 'max_score_decay': 1.0, 'vis_attn': 0}
 
     try:
         seq_name = int(args.sequence)
     except:
         seq_name = args.sequence
-
     run_tracker(args.tracker_name, args.tracker_param, args.runid, args.dataset_name, seq_name, args.debug,
                 args.threads, num_gpus=args.num_gpus, tracker_params=tracker_params)
 

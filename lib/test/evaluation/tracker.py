@@ -88,9 +88,9 @@ class Tracker:
 
         # Get init information
         init_info = seq.init_info()
-
+        print("reached here", init_info)
         tracker = self.create_tracker(params)
-        print("reached here", tracker, init_info)
+        # print("reached here", tracker, init_info)
         output = self._track_sequence(tracker, seq, init_info)
         return output
 

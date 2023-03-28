@@ -265,19 +265,19 @@ def get_mixformer_vit(config, train):
     else:
         raise KeyError(f"VIT_TYPE shoule set to 'large_patch16' or 'base_patch16'")
     print("reached here in mixformer_vit 14")
-    if config.MODEL.BACKBONE.PRETRAINED and train:
-        ckpt_path = config.MODEL.BACKBONE.PRETRAINED_PATH
-        ckpt = torch.load(ckpt_path, map_location='cpu')['model']
-        new_dict = {}
-        for k, v in ckpt.items():
-            if 'pos_embed' not in k and 'mask_token' not in k:    # use fixed pos embed
-                new_dict[k] = v
-        missing_keys, unexpected_keys = vit.load_state_dict(new_dict, strict=False)
-        if is_main_process():
-            print("Load pretrained backbone checkpoint from:", ckpt_path)
-            print("missing keys:", missing_keys)
-            print("unexpected keys:", unexpected_keys)
-            print("Loading pretrained ViT done.")
+    # if config.MODEL.BACKBONE.PRETRAINED and train:
+    #     ckpt_path = config.MODEL.BACKBONE.PRETRAINED_PATH
+    #     ckpt = torch.load(ckpt_path, map_location='cpu')['model']
+    #     new_dict = {}
+    #     for k, v in ckpt.items():
+    #         if 'pos_embed' not in k and 'mask_token' not in k:    # use fixed pos embed
+    #             new_dict[k] = v
+    #     missing_keys, unexpected_keys = vit.load_state_dict(new_dict, strict=False)
+    #     if is_main_process():
+    #         print("Load pretrained backbone checkpoint from:", ckpt_path)
+    #         print("missing keys:", missing_keys)
+    #         print("unexpected keys:", unexpected_keys)
+    #         print("Loading pretrained ViT done.")
     print("reached here in mixformer_vit 15")
     return vit
 

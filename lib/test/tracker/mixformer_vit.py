@@ -80,6 +80,7 @@ class MixFormer(BaseTracker):
         # get the final box result
         self.state = clip_box(self.map_box_back(pred_box, resize_factor), H, W, margin=10)
         # print(self.state)
+        print(self.update_intervals)
         # update template
         for idx, update_i in enumerate(self.update_intervals):
             if self.frame_id % update_i == 0:

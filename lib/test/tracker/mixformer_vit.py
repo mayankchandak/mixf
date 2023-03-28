@@ -61,6 +61,7 @@ class MixFormer(BaseTracker):
             return {"all_boxes": all_boxes_save}
 
     def track(self, image, info: dict = None):
+        print("Inside track |", image.shape, info)
         H, W, _ = image.shape
         self.frame_id += 1
         # print("frame id: {}".format(self.frame_id))

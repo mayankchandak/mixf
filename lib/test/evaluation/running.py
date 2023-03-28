@@ -134,8 +134,9 @@ def run_sequence(seq: Sequence, tracker: Tracker, debug=False, num_gpu=8):
     else:
         try:
             output = tracker.run_sequence(seq, debug=debug)
+            print("Successful |", output)
         except Exception as e:
-            print(e)
+            print("Failure |", e)
             return
 
     sys.stdout.flush()

@@ -57,7 +57,7 @@ def main():
     tracker_params = {}
     for param in list(filter(lambda s: s.split('__')[0] == 'params' and getattr(args, s) != None, args.__dir__())):
         tracker_params[param.split('__')[1]] = getattr(args, param)
-    print(tracker_params)
+    print("Tracker params |", tracker_params)
 
     try:
         seq_name = int(args.sequence)

@@ -66,7 +66,9 @@ class Tracker:
         self.params = self.get_parameters(tracker_params)
 
     def create_tracker(self, params):
+        print(self.tracker_class, params, self.dataset_name)
         tracker = self.tracker_class(params, self.dataset_name)
+
         return tracker
 
     def run_sequence(self, seq, debug=None):
@@ -88,7 +90,8 @@ class Tracker:
 
         # Get init information
         init_info = seq.init_info()
-        print("reached here", init_info)
+        # print("reached here", init_info)
+        # reached here {'init_bbox': [395.0, 340.0, 532.0, 407.0]}
         tracker = self.create_tracker(params)
         # print("reached here", tracker, init_info)
         output = self._track_sequence(tracker, seq, init_info)

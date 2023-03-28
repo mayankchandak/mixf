@@ -142,6 +142,7 @@ class Tracker:
         print("reached here - 97")
         _store_outputs(out, init_default)
         print("reached here - 98")
+        print(seq.frames[1:])
         for frame_num, frame_path in enumerate(seq.frames[1:], start=1):
             image = self._read_image(frame_path)
 

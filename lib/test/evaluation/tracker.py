@@ -152,9 +152,11 @@ class Tracker:
             info = seq.frame_info(frame_num)
             print(info)
             info['previous_output'] = prev_output
-
+            print(info)
             out = tracker.track(image, info)
+            print(out)
             prev_output = OrderedDict(out)
+            print(prev_output)
             _store_outputs(out, {'time': time.time() - start_time})
         print("reached here - 99")
         for key in ['target_bbox', 'all_boxes', 'all_scores']:

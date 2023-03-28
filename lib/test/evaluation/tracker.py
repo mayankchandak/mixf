@@ -111,7 +111,7 @@ class Tracker:
         # frame i
         # time[i] is either the processing time for frame i, or an OrderedDict containing processing times for each
         # object in frame i
-        print("In tracker.py |", seq.frames)
+        # print("In tracker.py |", seq.frames)
         output = {'target_bbox': [],
                   'time': []}
         if tracker.params.save_all_boxes:

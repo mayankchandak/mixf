@@ -15,7 +15,7 @@ class MixFormer(BaseTracker):
         print("reached here in mixformer_vit 7")
         network = build_mixformer_vit(params.cfg)
         print("reached here in mixformer_vit 8")
-        network.load_state_dict(torch.load(self.params.checkpoint, map_location='cpu')['net'], strict=True)
+        network.load_state_dict(torch.load(self.params.checkpoint, map_location='cpu')['net'], strict=False)
         self.cfg = params.cfg
         print("reached here in mixformer_vit 6")
         self.network = network.cuda()

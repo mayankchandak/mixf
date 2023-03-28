@@ -66,7 +66,8 @@ class Tracker:
         self.params = self.get_parameters(tracker_params)
 
     def create_tracker(self, params):
-        print(self.tracker_class, params, self.dataset_name)
+        # print(self.tracker_class, params, self.dataset_name)
+        # <class 'lib.test.tracker.mixformer_vit.MixFormer'> <lib.test.utils.params.TrackerParams object at 0x7fd78beac610> got10k_test
         tracker = self.tracker_class(params, self.dataset_name)
 
         return tracker

@@ -28,7 +28,7 @@ class MixFormer(BaseTracker):
                 os.makedirs(self.save_dir)
         # for save boxes from all queries
         self.save_all_boxes = params.save_all_boxes
-
+        print("reached here in mixformer_vit")
         # Set the update interval
         DATASET_NAME = dataset_name.upper()
         if hasattr(self.cfg.TEST.UPDATE_INTERVALS, DATASET_NAME):

@@ -24,7 +24,7 @@ class GOT10KDataset(BaseDataset):
             self.base_path = os.path.join(self.env_settings.got10k_path, 'train')
 
         self.sequence_list = self._get_sequence_list(split)
-        print(self.sequence_list)
+        # print(self.sequence_list)
         self.split = split
 
     def get_sequence_list(self):

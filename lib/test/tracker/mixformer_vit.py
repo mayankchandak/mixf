@@ -12,20 +12,20 @@ from lib.utils.box_ops import clip_box
 class MixFormer(BaseTracker):
     def __init__(self, params, dataset_name):
         super(MixFormer, self).__init__(params)
-        print("reached here in mixformer_vit 7")
+        # print("reached here in mixformer_vit 7")
         network = build_mixformer_vit(params.cfg)
-        print("reached here in mixformer_vit 8")
+        # print("reached here in mixformer_vit 8")
         network.load_state_dict(torch.load(self.params.checkpoint, map_location='cpu')['net'], strict=False)
         self.cfg = params.cfg
-        print("reached here in mixformer_vit 6")
+        # print("reached here in mixformer_vit 6")
         self.network = network.cuda()
-        print("reached here in mixformer_vit 5")
+        # print("reached here in mixformer_vit 5")
         self.network.eval()
-        print("reached here in mixformer_vit 3")
+        # print("reached here in mixformer_vit 3")
         self.preprocessor = Preprocessor_wo_mask()
-        print("reached here in mixformer_vit 4")
+        # print("reached here in mixformer_vit 4")
         self.state = None
-        print("reached here in mixformer_vit 2")
+        # print("reached here in mixformer_vit 2")
         # for debug
         self.debug = False
         self.frame_id = 0
@@ -35,14 +35,14 @@ class MixFormer(BaseTracker):
                 os.makedirs(self.save_dir)
         # for save boxes from all queries
         self.save_all_boxes = params.save_all_boxes
-        print("reached here in mixformer_vit 1")
+        # print("reached here in mixformer_vit 1")
         # Set the update interval
         DATASET_NAME = dataset_name.upper()
         if hasattr(self.cfg.TEST.UPDATE_INTERVALS, DATASET_NAME):
             self.update_intervals = self.cfg.TEST.UPDATE_INTERVALS[DATASET_NAME]
         else:
             self.update_intervals = self.cfg.DATA.MAX_SAMPLE_INTERVAL
-        print("Update interval is: ", self.update_intervals)
+        # print("Update interval is: ", self.update_intervals)
 
     def initialize(self, image, info: dict):
         # forward the template once
@@ -61,7 +61,7 @@ class MixFormer(BaseTracker):
             return {"all_boxes": all_boxes_save}
 
     def track(self, image, info: dict = None):
-        print("Inside track |", image.shape, info)
+        # print("Inside track |", image.shape, info)
         H, W, _ = image.shape
         self.frame_id += 1
         # print("frame id: {}".format(self.frame_id))
@@ -80,7 +80,7 @@ class MixFormer(BaseTracker):
         # get the final box result
         self.state = clip_box(self.map_box_back(pred_box, resize_factor), H, W, margin=10)
         # print(self.state)
-        print(self.update_intervals)
+        # print(self.update_intervals)
         # update template
         for idx, update_i in enumerate(self.update_intervals):
             if self.frame_id % update_i == 0:
@@ -99,11 +99,11 @@ class MixFormer(BaseTracker):
             '''save all predictions'''
             all_boxes = self.map_box_back_batch(pred_boxes * self.params.search_size / resize_factor, resize_factor)
             all_boxes_save = all_boxes.view(-1).tolist()  # (4N, )
-            print("Case 1|", self.state)
+            # print("Case 1|", self.state)
             return {"target_bbox": self.state,
                     "all_boxes": all_boxes_save}
         else:
-            print("Case 2|", self.state)
+            # print("Case 2|", self.state)
             return {"target_bbox": self.state}
 
     def map_box_back(self, pred_box: list, resize_factor: float):

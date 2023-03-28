@@ -127,23 +127,23 @@ class Tracker:
 
         # Initialize
         image = self._read_image(seq.frames[0])
-        print("reached here - 95")
+        # print("reached here - 95")
         start_time = time.time()
         out = tracker.initialize(image, init_info)
-        print("reached here - 95.5", out)
+        # print("reached here - 95.5", out)
         if out is None:
             out = {}
-        print("reached here - 96")
+        # print("reached here - 96")
         prev_output = OrderedDict(out)
         init_default = {'target_bbox': init_info.get('init_bbox'),
                         'time': time.time() - start_time}
         if tracker.params.save_all_boxes:
             init_default['all_boxes'] = out['all_boxes']
             init_default['all_scores'] = out['all_scores']
-        print("reached here - 97")
+        # print("reached here - 97")
         _store_outputs(out, init_default)
-        print("reached here - 98")
-        print(seq.frames[1:])
+        # print("reached here - 98")
+        # print(seq.frames[1:])
         for frame_num, frame_path in enumerate(seq.frames[1:], start=1):
             # print(frame_num, frame_path, [key for key in seq.frame_info])
             image = self._read_image(frame_path)
@@ -151,15 +151,15 @@ class Tracker:
             start_time = time.time()
 
             info = seq.frame_info(frame_num)
-            print(info)
+            # print(info)
             info['previous_output'] = prev_output
-            print(info)
+            # print(info)
             out = tracker.track(image, info)
-            print(out)
+            # print(out)
             prev_output = OrderedDict(out)
-            print(prev_output)
+            # print(prev_output)
             _store_outputs(out, {'time': time.time() - start_time})
-        print("reached here - 99")
+        # print("reached here - 99")
         for key in ['target_bbox', 'all_boxes', 'all_scores']:
             if key in output and len(output[key]) <= 1:
                 output.pop(key)

@@ -26,7 +26,7 @@ def load_dataset(name: str):
     """ Import and load a single dataset."""
     name = name.lower()
     dset_info = dataset_dict.get(name)
-    print(dset_info)
+    # print(dset_info)
     if dset_info is None:
         raise ValueError('Unknown dataset \'%s\'' % name)
 

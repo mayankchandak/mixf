@@ -58,7 +58,8 @@ class Tracker:
             # Path OK | /workspace/Mayank/mixf/lib/test/tracker/mixformer_vit.py
             tracker_module = importlib.import_module('lib.test.tracker.{}'.format(self.name))
             self.tracker_class = tracker_module.get_tracker_class()
-            print(self.tracker_class)
+            # print(self.tracker_class)
+            # <class 'lib.test.tracker.mixformer_vit.MixFormer'>
         else:
             self.tracker_class = None
 
@@ -106,7 +107,7 @@ class Tracker:
         # frame i
         # time[i] is either the processing time for frame i, or an OrderedDict containing processing times for each
         # object in frame i
-
+        print(tracker, seq, init_info, tracker.params.save_all_boxes)
         output = {'target_bbox': [],
                   'time': []}
         if tracker.params.save_all_boxes:

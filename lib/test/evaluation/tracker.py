@@ -54,9 +54,11 @@ class Tracker:
         tracker_module_abspath = os.path.abspath(os.path.join(os.path.dirname(__file__),
                                                               '..', 'tracker', '%s.py' % self.name))
         if os.path.isfile(tracker_module_abspath):
-            print("Path OK |", tracker_module_abspath)
+            # print("Path OK |", tracker_module_abspath)
+            # Path OK | /workspace/Mayank/mixf/lib/test/tracker/mixformer_vit.py
             tracker_module = importlib.import_module('lib.test.tracker.{}'.format(self.name))
             self.tracker_class = tracker_module.get_tracker_class()
+            print(self.tracker_class)
         else:
             self.tracker_class = None
 

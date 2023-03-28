@@ -7,7 +7,7 @@ def local_env_settings():
 
     settings.davis_dir = ''
     settings.got10k_lmdb_path = '/workspace/Mayank/mixf/data/got10k_lmdb'
-    settings.got10k_path = '/workspace/Mayank/mixf/data/got10k'
+    settings.got10k_path = '/workspace/Mayank/got10k/test'
     settings.got_packed_results_path = ''
     settings.got_reports_path = ''
     settings.lasot_lmdb_path = '/workspace/Mayank/mixf/data/lasot_lmdb'

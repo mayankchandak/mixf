@@ -130,6 +130,7 @@ class Tracker:
         print("reached here - 95")
         start_time = time.time()
         out = tracker.initialize(image, init_info)
+        print("reached here - 95.5", out)
         if out is None:
             out = {}
         print("reached here - 96")

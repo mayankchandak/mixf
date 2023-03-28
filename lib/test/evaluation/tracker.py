@@ -153,7 +153,7 @@ class Tracker:
             out = tracker.track(image, info)
             prev_output = OrderedDict(out)
             _store_outputs(out, {'time': time.time() - start_time})
-
+        print("reached here - 99")
         for key in ['target_bbox', 'all_boxes', 'all_scores']:
             if key in output and len(output[key]) <= 1:
                 output.pop(key)

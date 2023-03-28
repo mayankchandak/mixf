@@ -4,28 +4,12 @@ from lib.test.utils.load_text import load_text
 import os
 
 
-class GOT10KDataset(BaseDataset):
-    """ GOT-10k dataset.
-
-    Publication:
-        GOT-10k: A Large High-Diversity Benchmark for Generic Object Tracking in the Wild
-        Lianghua Huang, Xin Zhao, and Kaiqi Huang
-        arXiv:1810.11981, 2018
-        https://arxiv.org/pdf/1810.11981.pdf
-
-    Download dataset from http://got-10k.aitestunion.com/downloads
-    """
-    def __init__(self, split):
+class NATDataset(BaseDataset):
+    def __init__(self):
         super().__init__()
-        # Split can be test, val, or ltrval (a validation split consisting of videos from the official train set)
-        if split == 'test' or split == 'val':
-            self.base_path = os.path.join(self.env_settings.got10k_path, split)
-        else:
-            self.base_path = os.path.join(self.env_settings.got10k_path, 'train')
-
+        self.base_path = self.env_settings.nat2021_test_path
+        
         self.sequence_list = self._get_sequence_list(split)
-        print(self.sequence_list)
-        self.split = split
 
     def get_sequence_list(self):
         return SequenceList([self._construct_sequence(s) for s in self.sequence_list])

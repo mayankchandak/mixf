@@ -5,6 +5,7 @@ def local_env_settings():
 
     # Set your local paths here.
 
+    settings.nat2021_test_path = '/workspace/Mayank/dataset/test/NAT2021'
     settings.davis_dir = ''
     settings.got10k_lmdb_path = '/workspace/Mayank/mixf/data/got10k_lmdb'
     settings.got10k_path = '/workspace/Mayank/got10k'

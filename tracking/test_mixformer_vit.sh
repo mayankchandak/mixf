@@ -1,1 +1,0 @@
-python tracking/test.py 

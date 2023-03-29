@@ -35,7 +35,7 @@
 # python lib/test/utils/transform_trackingnet.py --tracker_name mixformer_vit_online --cfg_name baseline_large
 
 ### GOT10k test and pack
-python tracking/test.py mixformer_vit baseline_large --dataset nat2021_test --threads 0 --num_gpus 1 --params__model mixformer_vit_large.pth
+python tracking/test.py #mixformer_vit baseline_large --dataset nat2021_test --threads 0 --num_gpus 1 --params__model mixformer_vit_large.pth
 # python tracking/test.py mixformer_vit baseline_large --dataset got10k_test --threads 0 --num_gpus 1 --params__model mixformer_vit_large.pth
 # python tracking/test.py mixformer_vit_online baseline_large --dataset got10k_test --threads 1 --num_gpus 1 --params__model mixformer_vit_large_online_got.pth.tar
 # python lib/test/utils/transform_got10k.py --tracker_name mixformer_vit_online --cfg_name baseline_large

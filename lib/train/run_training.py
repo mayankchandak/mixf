@@ -23,9 +23,7 @@ def init_seeds(seed):
     torch.backends.cudnn.benchmark = False
 
 
-def run_training(script_name, config_name, cudnn_benchmark=True, local_rank=-1, save_dir=None, base_seed=None,
-                 script_name_prv=None, config_name_prv=None,
-                 distill=None, script_teacher=None, config_teacher=None, stage1_model=None):
+def run_training(script_name, config_name, cudnn_benchmark=True, local_rank=-1, save_dir=None, base_seed=None):
     """Run the train script.
     args:
         script_name: Name of emperiment in the "experiments/" folder.
@@ -41,7 +39,6 @@ def run_training(script_name, config_name, cudnn_benchmark=True, local_rank=-1, 
 
     print('script_name: {}.py  config_name: {}.yaml'.format(script_name, config_name))
 
-    '''2021.1.5 set seed for different process'''
     if base_seed is not None:
         if local_rank != -1:
             init_seeds(base_seed + local_rank)
@@ -51,25 +48,14 @@ def run_training(script_name, config_name, cudnn_benchmark=True, local_rank=-1, 
     settings = ws_settings.Settings()
     settings.script_name = script_name
     settings.config_name = config_name
-    settings.stage1_model = stage1_model
     settings.project_path = 'train/{}/{}'.format(script_name, config_name)
-    if script_name_prv is not None and config_name_prv is not None:
-        settings.project_path_prv = 'train/{}/{}'.format(script_name_prv, config_name_prv)
+    
     settings.local_rank = local_rank
     settings.save_dir = os.path.abspath(save_dir)
     settings.use_lmdb = False
     prj_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
     settings.cfg_file = os.path.join(prj_dir, 'experiments/%s/%s.yaml' % (script_name, config_name))
-    if distill:
-        settings.distill = distill
-        settings.script_teacher = script_teacher
-        settings.config_teacher = config_teacher
-        if script_teacher is not None and config_teacher is not None:
-            settings.project_path_teacher = 'train/{}/{}'.format(script_teacher, config_teacher)
-        settings.cfg_file_teacher = os.path.join(prj_dir, 'experiments/%s/%s.yaml' % (script_teacher, config_teacher))
-        expr_module = importlib.import_module('lib.train.train_script_distill')
-    else:
-        expr_module = importlib.import_module('lib.train.train_script_mixformer')
+    expr_module = importlib.import_module('lib.train.train_script_mixformer')
     expr_func = getattr(expr_module, 'run')
 
     expr_func(settings)
@@ -83,13 +69,6 @@ def main():
     parser.add_argument('--local_rank', default=-1, type=int, help='node rank for distributed training')
     parser.add_argument('--save_dir', type=str, help='the directory to save checkpoints and logs')
     parser.add_argument('--seed', type=int, default=42, help='seed for random numbers')
-    parser.add_argument('--script_prv', type=str, default=None, help='Name of the train script of previous model.')
-    parser.add_argument('--config_prv', type=str, default=None, help="Name of the config file of previous model.")
-    # for knowledge distillation
-    parser.add_argument('--distill', type=int, choices=[0, 1], default=0)  # whether to use knowledge distillation
-    parser.add_argument('--script_teacher', type=str, help='teacher script name')
-    parser.add_argument('--config_teacher', type=str, help='teacher yaml configure file name')
-    parser.add_argument('--stage1_model', type=str, default=None, help='stage1 model used to train SPM.')
 
     args = parser.parse_args()
     if args.local_rank != -1:
@@ -98,10 +77,7 @@ def main():
     else:
         torch.cuda.set_device(0)
     run_training(args.script, args.config, cudnn_benchmark=args.cudnn_benchmark,
-                 local_rank=args.local_rank, save_dir=args.save_dir, base_seed=args.seed,
-                 script_name_prv=args.script_prv, config_name_prv=args.config_prv,
-                 distill=args.distill, script_teacher=args.script_teacher, config_teacher=args.config_teacher,
-                 stage1_model=args.stage1_model)
+                 local_rank=args.local_rank, save_dir=args.save_dir, base_seed=args.seed)
 
 
 if __name__ == '__main__':

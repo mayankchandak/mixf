@@ -62,7 +62,7 @@ class BaseTrainer:
         else:
             self._checkpoint_dir = None
 
-    def train(self, max_epochs, load_latest=False, fail_safe=True, load_previous_ckpt=False, distill=False):
+    def train(self, max_epochs, load_latest=False, fail_safe=True, load_previous_ckpt=False):
         """Do training for the given number of epochs.
         args:
             max_epochs - Max number of training epochs,
@@ -79,9 +79,6 @@ class BaseTrainer:
                 if load_previous_ckpt:
                     directory = '{}/{}'.format(self._checkpoint_dir, self.settings.project_path_prv)
                     self.load_state_dict(directory)
-                if distill:
-                    directory_teacher = '{}/{}'.format(self._checkpoint_dir, self.settings.project_path_teacher)
-                    self.load_state_dict(directory_teacher, distill=True)
                 for epoch in range(self.epoch+1, max_epochs+1):
                     self.epoch = epoch
 
@@ -229,7 +226,7 @@ class BaseTrainer:
                     loader.sampler.set_epoch(self.epoch)
         return True
 
-    def load_state_dict(self, checkpoint=None, distill=False):
+    def load_state_dict(self, checkpoint=None):
         """Loads a network checkpoint file.
 
         Can be called in three different ways:
@@ -240,11 +237,7 @@ class BaseTrainer:
             load_checkpoint(path_to_checkpoint):
                 Loads the file from the given absolute path (str).
         """
-        if distill:
-            net = self.actor.net_teacher.module if multigpu.is_multi_gpu(self.actor.net_teacher) \
-                else self.actor.net_teacher
-        else:
-            net = self.actor.net.module if multigpu.is_multi_gpu(self.actor.net) else self.actor.net
+        net = self.actor.net.module if multigpu.is_multi_gpu(self.actor.net) else self.actor.net
 
         net_type = type(net).__name__
 

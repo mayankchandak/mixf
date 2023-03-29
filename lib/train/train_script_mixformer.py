@@ -10,7 +10,6 @@ from torch.nn.parallel import DistributedDataParallel as DDP
 # some more advanced functions
 from .base_functions import *
 # network related
-from lib.models.mixformer_cvt import build_mixformer_cvt
 from lib.models.mixformer_vit import build_mixformer_vit
 
 # forward propagation related

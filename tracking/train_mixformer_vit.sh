@@ -5,13 +5,13 @@
 
 ### Training MixFormer-ViT-B
 # Stage1: train mixformer without SPM
-python tracking/train.py --script mixformer_vit --config baseline --save_dir /YOUR/PATH/TO/SAVE/MIXFORMER --mode multiple --nproc_per_node 8
+# python tracking/train.py --script mixformer_vit --config baseline --save_dir /YOUR/PATH/TO/SAVE/MIXFORMER --mode multiple --nproc_per_node 8
 ## Stage2: train mixformer_online, i.e., SPM (score prediction module)
 # python tracking/train.py --script mixformer_vit_online --config baseline --save_dir /YOUR/PATH/TO/SAVE/MIXFORMER --mode multiple --nproc_per_node 8 --stage1_model /STAGE1/MODEL
 
 
 ### Training MixFormer-L
-#python tracking/train.py --script mixformer_vit --config baseline_large --save_dir /YOUR/PATH/TO/SAVE/MIXFORMERL --mode multiple --nproc_per_node 8
+python tracking/train.py --script mixformer_vit --config baseline_large --save_dir mixformer_train --mode single --nproc_per_node 0
 #python tracking/train.py --script mixformer_vit_online --config baseline_large --save_dir /YOUR/PATH/TO/SAVE/MIXFORMERL_ONLINE --mode multiple --nproc_per_node 8 --stage1_model /STAGE1/MODEL
 
 

@@ -1,1 +1,1 @@
-python tracking/test.py mixformer_vit baseline_large
+python tracking/test.py 

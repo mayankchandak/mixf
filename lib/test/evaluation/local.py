@@ -7,11 +7,9 @@ def local_env_settings():
 
     settings.nat2021_test_path = '/workspace/Mayank/dataset/test/NAT2021'
     settings.davis_dir = ''
-    settings.got10k_lmdb_path = '/workspace/Mayank/mixf/data/got10k_lmdb'
     settings.got10k_path = '/workspace/Mayank/got10k'
     settings.got_packed_results_path = ''
     settings.got_reports_path = ''
-    settings.lasot_lmdb_path = '/workspace/Mayank/mixf/data/lasot_lmdb'
     settings.lasot_path = '/workspace/Mayank/mixf/data/lasot'
     settings.network_path = '/workspace/Mayank/mixf/test/networks'    # Where tracking networks are stored.
     settings.nfs_path = '/workspace/Mayank/mixf/data/nfs'

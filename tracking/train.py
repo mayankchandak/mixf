@@ -8,13 +8,13 @@ def parse_args():
     """
     parser = argparse.ArgumentParser(description='Parse args for training')
     # for train
-    parser.add_argument('--script', type=str, help='training script name')
-    parser.add_argument('--config', type=str, default='baseline', help='yaml configure file name')
+    parser.add_argument('--script', type=str, default='mixformer_vit', help='training script name')
+    parser.add_argument('--config', type=str, default='baseline_large', help='yaml configure file name')
     parser.add_argument('--stage1_model', type=str, default=None, help='stage1 model used to train SPM.')
-    parser.add_argument('--save_dir', type=str, help='root directory to save checkpoints, logs, and tensorboard')
-    parser.add_argument('--mode', type=str, choices=["single", "multiple"], default="multiple",
+    parser.add_argument('--save_dir', type=str, default='mixformer_train', help='root directory to save checkpoints, logs, and tensorboard')
+    parser.add_argument('--mode', type=str, choices=["single", "multiple"], default="single",
                         help="train on single gpu or multiple gpus")
-    parser.add_argument('--nproc_per_node', type=int, help="number of GPUs per node")  # specify when mode is multiple
+    parser.add_argument('--nproc_per_node', default=0, type=int, help="number of GPUs per node")  # specify when mode is multiple
     parser.add_argument('--master_port', type=int, help="master port", default=26500)
     parser.add_argument('--use_lmdb', type=int, choices=[0, 1], default=0)  # whether datasets are in lmdb format
     parser.add_argument('--script_prv', type=str, help='training script name')

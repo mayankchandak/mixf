@@ -8,8 +8,8 @@ from einops import rearrange
 from timm.models.layers import DropPath, Mlp
 
 from lib.utils.misc import is_main_process
-from lib.models.mixformer_cvt.head import build_box_head
-from lib.models.mixformer_cvt.utils import to_2tuple
+from lib.models.mixformer_vit.head import build_box_head
+from lib.models.mixformer_vit.utils import to_2tuple
 from lib.utils.box_ops import box_xyxy_to_cxcywh, box_cxcywh_to_xyxy
 from lib.models.mixformer_vit.pos_utils import get_2d_sincos_pos_embed
 

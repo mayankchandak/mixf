@@ -61,7 +61,9 @@ def run(settings):
         net = build_mixformer_cvt_online_score(cfg, settings)
     elif settings.script_name == "mixformer_vit":
         net = build_mixformer_vit(cfg)
+        print("load pretrain")
         net.load_state_dict(torch.load('/workspace/Mayank/original-udat/mixformer.pth', map_location='cpu')['net'], strict=False)
+        print("load done")
     elif settings.script_name == "mixformer_vit_online":
         net = build_mixformer_vit_online_score(cfg, settings)
     elif settings.script_name == "mixformer_convmae":

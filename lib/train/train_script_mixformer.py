@@ -10,9 +10,9 @@ from torch.nn.parallel import DistributedDataParallel as DDP
 # some more advanced functions
 from .base_functions import *
 # network related
-from lib.models.mixformer_cvt import build_mixformer_cvt, build_mixformer_cvt_online_score
-from lib.models.mixformer_vit import build_mixformer_vit, build_mixformer_vit_online_score
-from lib.models.mixformer_convmae import build_mixformer_convmae, build_mixformer_convmae_online_score
+from lib.models.mixformer_cvt import build_mixformer_cvt
+from lib.models.mixformer_vit import build_mixformer_vit
+
 # forward propagation related
 from lib.train.actors import MixFormerActor
 # for import modules
@@ -55,21 +55,11 @@ def run(settings):
     loader_train, loader_val = build_dataloaders(cfg, settings)
 
     # Create network
-    if settings.script_name == "mixformer_cvt":
-        net = build_mixformer_cvt(cfg)
-    elif settings.script_name == "mixformer_online_cvt":
-        net = build_mixformer_cvt_online_score(cfg, settings)
-    elif settings.script_name == "mixformer_vit":
+    if settings.script_name == "mixformer_vit":
         net = build_mixformer_vit(cfg)
         print("load pretrain")
         net.load_state_dict(torch.load('/workspace/Mayank/original-udat/mixformer.pth', map_location='cpu')['net'], strict=False)
         print("load done")
-    elif settings.script_name == "mixformer_vit_online":
-        net = build_mixformer_vit_online_score(cfg, settings)
-    elif settings.script_name == "mixformer_convmae":
-        net = build_mixformer_convmae(cfg)
-    elif settings.script_name == "mixformer_convmae_online":
-        net = build_mixformer_convmae_online_score(cfg, settings)
     else:
         raise ValueError("illegal script name")
 
@@ -85,14 +75,10 @@ def run(settings):
     settings.distill_loss_type = getattr(cfg.TRAIN, "DISTILL_LOSS_TYPE", "KL")
     # settings.save_every_epoch = True
     # Loss functions and Actors
-    if settings.script_name in ["mixformer_cvt", "mixformer_vit", "mixformer_convmae"]:
+    if settings.script_name in ["mixformer_vit"]:
         objective = {'ciou': ciou_loss, 'l1': l1_loss}
         loss_weight = {'ciou': cfg.TRAIN.IOU_WEIGHT, 'l1': cfg.TRAIN.L1_WEIGHT}
         actor = MixFormerActor(net=net, objective=objective, loss_weight=loss_weight, settings=settings)
-    elif settings.script_name in ["mixformer_cvt_online", "mixformer_vit_online", "mixformer_convmae_online"]:
-        objective = {'ciou': ciou_loss, 'l1': l1_loss, 'score': BCEWithLogitsLoss()}
-        loss_weight = {'ciou': cfg.TRAIN.IOU_WEIGHT, 'l1': cfg.TRAIN.L1_WEIGHT, 'score': cfg.TRAIN.SCORE_WEIGHT}
-        actor = MixFormerActor(net=net, objective=objective, loss_weight=loss_weight, settings=settings, run_score_head=True)
     else:
         raise ValueError("illegal script name")
 

@@ -133,7 +133,7 @@ class LTRTrainer(BaseTrainer):
             for param in self.Disc.parameters():
                 param.requires_grad = True
             night_template_out, night_search_out, day_template_out, day_search_out = \
-                night_template_out.detach(), night_search_out.detach(), day_template_out.detach(), day_search_out.detach()
+                night_template_out.detach().float(), night_search_out.detach().float(), day_template_out.detach().float(), day_search_out.detach().float()
             Dn1, Dn2, Dd1, Dd2 = self.Disc(night_template_out), self.Disc(night_search_out), self.Disc(day_template_out), self.Disc(self.day_search_out)
             Dt = torch.FloatTensor(Dn1.data.size()).fill_(target_label)
             Ds = torch.FloatTensor(Dd1.data.size()).fill_(source_label)

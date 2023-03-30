@@ -170,6 +170,9 @@ class TrackingSampler(torch.utils.data.Dataset):
                 template_masks = template_anno['mask'] if 'mask' in template_anno else [torch.zeros((H, W))] * self.num_template_frames
                 search_masks = search_anno['mask'] if 'mask' in search_anno else [torch.zeros((H, W))] * self.num_search_frames
 
+                if dataset.get_name() == 'nat':
+                    print('nat')
+
                 data = TensorDict({'template_images': template_frames,
                                    'template_anno': template_anno['bbox'],
                                    'template_masks': template_masks,
@@ -183,8 +186,7 @@ class TrackingSampler(torch.utils.data.Dataset):
 
                 # check whether data is valid
                 valid = data['valid']
-                if dataset.get_name() == 'nat':
-                    print(valid)
+                
             except:
                 valid = False
             # print(dataset, "Template images |", data['template_images'].shape)

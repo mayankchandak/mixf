@@ -128,7 +128,10 @@ class NAT(BaseVideoDataset):
         for key, value in anno.items():
             print(key, value.shape, frame_ids, len(frame_ids))
             if value:
-                anno_frames[key] = [value[f_id, ...].clone() for f_id in frame_ids]
+                try:
+                    anno_frames[key] = [value[f_id, ...].clone() for f_id in frame_ids]
+                except:
+                    print("Error here")
             else:
                 anno_frames[key] = [None for f_id in frame_ids]
             print("Exit")

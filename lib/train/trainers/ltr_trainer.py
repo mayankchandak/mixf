@@ -10,7 +10,7 @@ from torch.cuda.amp import autocast
 from lib.train.trainers.misc import NativeScalerWithGradNormCount as NativeScaler
 
 class LTRTrainer(BaseTrainer):
-    def __init__(self, actor, loaders, optimizer, settings, optimizer_D, Disc, lr_scheduler=None, accum_iter=1,
+    def __init__(self, actor, loaders, optimizer, settings, Disc, optimizer_D, lr_scheduler=None, accum_iter=1,
                  use_amp=False, shed_args=None, nat_loader=None):
         """
         args:

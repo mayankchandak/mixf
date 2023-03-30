@@ -103,6 +103,7 @@ class TrackingSampler(torch.utils.data.Dataset):
             TensorDict - dict containing all the data blocks
         """
         valid = False
+        print("Entered getitem")
         while not valid:
             # Select a dataset
             dataset = random.choices(self.datasets, self.p_datasets)[0]
@@ -184,7 +185,7 @@ class TrackingSampler(torch.utils.data.Dataset):
                 valid = data['valid']
             except:
                 valid = False
-
+        print("Exit getitem", data['valid'])
         return data
 
     def getitem_cls(self):

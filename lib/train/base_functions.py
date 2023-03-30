@@ -116,7 +116,7 @@ def build_dataloaders(cfg, settings):
 
     nat_sampler = DistributedSampler(dataset_nat) if settings.local_rank != -1 else None
     loader_nat = LTRLoader('nat', dataset_nat, training=False, batch_size=cfg.TRAIN.BATCH_SIZE, shuffle=shuffle,
-                             num_workers=cfg.TRAIN.NUM_WORKER, drop_last=True, stack_dim=1)
+                             num_workers=cfg.TRAIN.NUM_WORKER, drop_last=True, stack_dim=1, sampler=nat_sampler)
 
     # Validation samplers and loaders
     dataset_val = sampler.TrackingSampler(datasets=names2datasets(cfg.DATA.VAL.DATASETS_NAME, settings, opencv_loader),

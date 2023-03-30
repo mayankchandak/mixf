@@ -115,12 +115,12 @@ class NAT(BaseVideoDataset):
         print("Entered get frames")
         seq_path = os.path.join(self.root, 'NAT2021_train', 'train_clip', self.sequence_list[seq_id])
         obj_meta = self.sequence_meta_info[self.sequence_list[seq_id]]
-
+        print("reached here 0")
         frame_list = [self._get_frame(seq_path, f_id) for f_id in frame_ids]
-
+        print("reached here 1")
         if anno is None:
             anno = self.get_sequence_info(seq_id)
-
+        print("reached here 2")
         anno_frames = {}
         for key, value in anno.items():
             anno_frames[key] = [value[f_id, ...].clone() for f_id in frame_ids]

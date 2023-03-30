@@ -73,7 +73,8 @@ class LTRTrainer(BaseTrainer):
         # for data_iter_step, data in enumerate(loader, 1):
         print("Debug | Dataset size :", min(len(loader), len(self.nat_loader)))
         for data_iter_step in range(1, min(len(loader), len(self.nat_loader)) + 1):
-            # counter+=1
+            counter+=1
+            print("Counter:", counter)
             day_data = next(loader_iter)
             night_data = next(nat_loader_iter)
             # get inputs
@@ -124,7 +125,7 @@ class LTRTrainer(BaseTrainer):
             # print statistics
             self._print_stats(data_iter_step, loader, batch_size)
             # print("Debug |", counter)
-        # print("End |", counter)
+        print("End |", counter)
 
     def cycle_dataset(self, loader):
         """Do a cycle of training or validation."""

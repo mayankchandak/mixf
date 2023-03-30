@@ -86,9 +86,9 @@ def run(settings):
     accum_iter = getattr(cfg.TRAIN, "ACCUM_ITER", 1)
 
     model_Disc = TransformerDiscriminator(channels=256)
-    optimizer_D = torch.optim.Adam(model_Disc.parameters(), lr=cfg.TRAIN.BASE_LR_d, betas=(0.9, 0.99))
+    optimizer_D = torch.optim.Adam(model_Disc.parameters(), lr=0.005, betas=(0.9, 0.99))
     model_Disc.cuda().train()
-    
+
     if settings.local_rank != -1:
         model_Disc = DDP(model_Disc, device_ids=[settings.local_rank], find_unused_parameters=True)
         settings.device = torch.device("cuda:%d" % settings.local_rank)

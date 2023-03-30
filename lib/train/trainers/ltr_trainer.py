@@ -10,7 +10,7 @@ from torch.cuda.amp import autocast
 from lib.train.trainers.misc import NativeScalerWithGradNormCount as NativeScaler
 
 class LTRTrainer(BaseTrainer):
-    def __init__(self, actor, loaders, optimizer, settings, lr_scheduler=None, accum_iter=1,
+    def __init__(self, actor, loaders, optimizer, settings, optimizer_D, Disc, lr_scheduler=None, accum_iter=1,
                  use_amp=False, shed_args=None, nat_loader=None):
         """
         args:
@@ -40,6 +40,8 @@ class LTRTrainer(BaseTrainer):
         self.use_amp = use_amp
         self.accum_iter = accum_iter
         self.nat_loader = nat_loader
+        self.optimizer_D = optimizer_D
+        self.Disc = Disc
         if use_amp:
             print("Using amp")
             self.loss_scaler = NativeScaler()
@@ -54,7 +56,65 @@ class LTRTrainer(BaseTrainer):
             if getattr(self.settings, param, None) is None:
                 setattr(self.settings, param, default_value)
 
-    def cycle_dataset(self, loader, isnat=False):
+    def cycle_dataset_with_nat(self, loader):
+        """Do a cycle of training or validation."""
+
+        self.actor.train(loader.training)
+        torch.set_grad_enabled(loader.training)
+
+        self._init_timing()
+
+        self.optimizer.zero_grad()
+        self.optimizer_D.zero_grad()
+        
+        loader_iter = iter(loader)
+        nat_loader_iter = iter(self.nat_loader)
+        # for data_iter_step, data in enumerate(loader, 1):
+        for data_iter_step in range(1, min(len(loader), len(self.nat_loader)) + 1):
+            # counter+=1
+            day_data = next(loader_iter)
+            # get inputs
+            if self.move_data_to_gpu:
+                day_data = day_data.to(self.device)
+
+            day_data['epoch'] = self.epoch
+            day_data['settings'] = self.settings
+            # forward pass
+            if not self.use_amp:
+                loss, stats = self.actor(day_data)
+            else:
+                with autocast():
+                    loss, stats = self.actor(day_data)
+
+            loss /= self.accum_iter
+            # backward pass and update weights
+            if loader.training:
+                # self.optimizer.zero_grad()
+                if not self.use_amp:
+                    loss.backward()
+                    if (data_iter_step + 1) % self.accum_iter == 0:
+                        if self.settings.grad_clip_norm > 0:
+                            torch.nn.utils.clip_grad_norm_(self.actor.net.parameters(), self.settings.grad_clip_norm)
+                        self.optimizer.step()
+                else:
+                    self.loss_scaler(loss, self.optimizer, parameters=self.actor.net.parameters(),
+                                     clip_grad=self.settings.grad_clip_norm,
+                                     update_grad=(data_iter_step + 1) % self.accum_iter == 0)
+
+            if (data_iter_step + 1) % self.accum_iter == 0:
+                self.optimizer.zero_grad()
+            torch.cuda.synchronize()
+
+            # update statistics
+            batch_size = day_data['template_images'].shape[loader.stack_dim]
+            self._update_stats(stats, batch_size, loader)
+
+            # print statistics
+            self._print_stats(data_iter_step, loader, batch_size)
+            # print("Debug |", counter)
+        # print("End |", counter)
+
+    def cycle_dataset(self, loader):
         """Do a cycle of training or validation."""
 
         self.actor.train(loader.training)
@@ -65,10 +125,10 @@ class LTRTrainer(BaseTrainer):
         self.optimizer.zero_grad()
         counter = 0
         loader_iter = iter(loader)
-        # for data_iter_step, data in enumerate(loader, 1):
-        for data_iter_step in range(1, len(loader) + 1):
-            counter+=1
-            data = next(loader_iter)
+        for data_iter_step, data in enumerate(loader, 1):
+        # for data_iter_step in range(1, len(loader) + 1):
+            # counter+=1
+            # data = next(loader_iter)
             # get inputs
             if self.move_data_to_gpu:
                 data = data.to(self.device)
@@ -107,8 +167,8 @@ class LTRTrainer(BaseTrainer):
 
             # print statistics
             self._print_stats(data_iter_step, loader, batch_size)
-            print("Debug |", counter)
-        print("End |", counter)
+            # print("Debug |", counter)
+        # print("End |", counter)
 
     def train_epoch(self):
         """Do one epoch for each loader."""
@@ -117,7 +177,12 @@ class LTRTrainer(BaseTrainer):
                 # 2021.1.10 Set epoch
                 if isinstance(loader.sampler, DistributedSampler):
                     loader.sampler.set_epoch(self.epoch)
-                self.cycle_dataset(loader)
+                if isinstance(self.nat_loader.sampler, DistributedSampler):
+                    self.nat_loader.sampler.set_epoch(self.epoch)
+                if len(loader) == 5000:
+                    self.cycle_dataset_with_nat(loader)
+                else:
+                    self.cycle_dataset(loader)
 
         self._stats_new_epoch()
         if self.settings.local_rank in [-1, 0]:

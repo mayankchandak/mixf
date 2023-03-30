@@ -96,7 +96,7 @@ class NAT(BaseVideoDataset):
         # visible, visible_ratio = self._read_target_visible(seq_path)
         visible = valid.byte()
 
-        return {'bbox': bbox, 'valid': valid, 'visible': visible, 'visible_ratio': visible_ratio}
+        return {'bbox': bbox, 'valid': valid, 'visible': visible, 'visible_ratio': None}
 
     def _get_frame_path(self, seq_path, frame_id):
         return os.path.join(seq_path, '{:06}.jpg'.format(frame_id+1))    # frames start from 1

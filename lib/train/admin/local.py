@@ -16,3 +16,4 @@ class EnvironmentSettings:
         self.msra10k_dir = ''
         self.davis_dir = ''
         self.youtubevos_dir = ''
+        self.nat_dir = '/workspace/Mayank/dataset/train'

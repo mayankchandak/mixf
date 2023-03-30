@@ -11,7 +11,7 @@ from lib.train.trainers.misc import NativeScalerWithGradNormCount as NativeScale
 
 class LTRTrainer(BaseTrainer):
     def __init__(self, actor, loaders, optimizer, settings, lr_scheduler=None, accum_iter=1,
-                 use_amp=False, shed_args=None):
+                 use_amp=False, shed_args=None, nat_loader=None):
         """
         args:
             actor - The actor for training the network
@@ -39,6 +39,7 @@ class LTRTrainer(BaseTrainer):
         self.settings = settings
         self.use_amp = use_amp
         self.accum_iter = accum_iter
+        self.nat_loader = nat_loader
         if use_amp:
             print("Using amp")
             self.loss_scaler = NativeScaler()
@@ -53,7 +54,7 @@ class LTRTrainer(BaseTrainer):
             if getattr(self.settings, param, None) is None:
                 setattr(self.settings, param, default_value)
 
-    def cycle_dataset(self, loader):
+    def cycle_dataset(self, loader, isnat=False):
         """Do a cycle of training or validation."""
 
         self.actor.train(loader.training)
@@ -62,6 +63,7 @@ class LTRTrainer(BaseTrainer):
         self._init_timing()
 
         self.optimizer.zero_grad()
+        print("Debug |", len(loader))
         for data_iter_step, data in enumerate(loader, 1):
             # get inputs
             if self.move_data_to_gpu:
@@ -110,6 +112,11 @@ class LTRTrainer(BaseTrainer):
                 if isinstance(loader.sampler, DistributedSampler):
                     loader.sampler.set_epoch(self.epoch)
                 self.cycle_dataset(loader)
+
+        # if self.epoch % self.nat_loader.epoch_interval == 0:
+        #     if isinstance(self.nat_loader.sampler, DistributedSampler):
+        #         nat_loader.sampler.set_epoch(self.epoch)
+        #     self.cycle_dataset(self.nat_loader, isnat=True)
 
         self._stats_new_epoch()
         if self.settings.local_rank in [-1, 0]:

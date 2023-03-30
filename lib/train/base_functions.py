@@ -1,7 +1,7 @@
 import torch
 from torch.utils.data.distributed import DistributedSampler
 # datasets related
-from lib.train.dataset import Lasot, Got10k, MSCOCOSeq, ImagenetVID, TrackingNet, TNL2k
+from lib.train.dataset import Lasot, Got10k, MSCOCOSeq, ImagenetVID, TrackingNet, TNL2k, NAT
 from lib.train.data import sampler, opencv_loader, processing, LTRLoader
 import lib.train.data.transforms as tfm
 from lib.utils.misc import is_main_process
@@ -45,6 +45,8 @@ def names2datasets(name_list: list, settings, image_loader):
         if name == "TRACKINGNET":
             # raise ValueError("NOW WE CAN ONLY USE TRACKINGNET FROM LMDB")
             datasets.append(TrackingNet(settings.env.trackingnet_dir, image_loader=image_loader))
+        if name == "NAT":
+            datasets.append(NAT(settings.env.nat_dir, image_loader=image_loader))
     return datasets
 
 
@@ -104,6 +106,17 @@ def build_dataloaders(cfg, settings):
 
     loader_train = LTRLoader('train', dataset_train, training=True, batch_size=cfg.TRAIN.BATCH_SIZE, shuffle=shuffle,
                              num_workers=cfg.TRAIN.NUM_WORKER, drop_last=True, stack_dim=1, sampler=train_sampler)
+    
+    dataset_nat = sampler.TrackingSampler(datasets=names2datasets('NAT', settings, opencv_loader),
+                                            p_datasets=cfg.DATA.TRAIN.DATASETS_RATIO,
+                                            samples_per_epoch=cfg.DATA.TRAIN.SAMPLE_PER_EPOCH,
+                                            max_gap=cfg.DATA.MAX_SAMPLE_INTERVAL, num_search_frames=settings.num_search,
+                                            num_template_frames=settings.num_template, processing=data_processing_train,
+                                            frame_sample_mode=sampler_mode, train_cls=train_score, pos_prob=0.5)
+
+    nat_sampler = DistributedSampler(dataset_nat) if settings.local_rank != -1 else None
+    loader_nat = LTRLoader('nat', dataset_nat, training=True, batch_size=cfg.TRAIN.BATCH_SIZE, shuffle=shuffle,
+                             num_workers=cfg.TRAIN.NUM_WORKER, drop_last=True, stack_dim=1, sampler=nat_sampler)
 
     # Validation samplers and loaders
     dataset_val = sampler.TrackingSampler(datasets=names2datasets(cfg.DATA.VAL.DATASETS_NAME, settings, opencv_loader),
@@ -117,7 +130,7 @@ def build_dataloaders(cfg, settings):
                            num_workers=cfg.TRAIN.NUM_WORKER, drop_last=True, stack_dim=1, sampler=val_sampler,
                            epoch_interval=cfg.TRAIN.VAL_EPOCH_INTERVAL)
 
-    return loader_train, loader_val
+    return loader_train, loader_val, loader_nat
 
 
 def get_optimizer_scheduler(net, cfg):

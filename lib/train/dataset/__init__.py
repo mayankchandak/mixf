@@ -5,3 +5,4 @@ from .imagenetvid import ImagenetVID
 from .coco import MSCOCO
 from .coco_seq import MSCOCOSeq
 from .tnl2k import TNL2k
+from .nat import NAT

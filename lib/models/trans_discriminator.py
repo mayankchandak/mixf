@@ -336,6 +336,7 @@ class TransformerDiscriminator(nn.Module):
         return x[:,0]
 
     def forward(self, x):
+        x = F.softmax(x, dim=1)
         x = self.grl_img(x)
         x = self.forward_features(x)
         x = self.head(x)

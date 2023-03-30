@@ -293,8 +293,7 @@ class MixFormer(nn.Module):
         self.newlayer = nn.Sequential(
             nn.ConvTranspose2d(in_channels=1024, out_channels=512, kernel_size=3, stride=2, padding=1),
             nn.ConvTranspose2d(in_channels=512, out_channels=256, kernel_size=3, stride=2, padding=1),
-            nn.Upsample(size=(128, 128), mode='bilinear', align_corners=True),
-            F.softmax(dim=1)
+            nn.Upsample(size=(128, 128), mode='bilinear', align_corners=True)
         )
 
     def forward(self, template, online_template, search, run_score_head=False, gt_bboxes=None):

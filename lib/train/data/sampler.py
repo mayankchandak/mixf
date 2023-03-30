@@ -182,7 +182,7 @@ class TrackingSampler(torch.utils.data.Dataset):
                 data = self.processing(data)
 
                 # check whether data is valid
-                # valid = data['valid']
+                valid = data['valid']
             except:
                 valid = False
             # print(dataset, "Template images |", data['template_images'].shape)

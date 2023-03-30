@@ -121,6 +121,8 @@ class NAT(BaseVideoDataset):
         if anno is None:
             print("anno is None")
             anno = self.get_sequence_info(seq_id)
+        else:
+            print(anno)
         # print("reached here 2")
         anno_frames = {}
         for key, value in anno.items():

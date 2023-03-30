@@ -9,6 +9,9 @@ from torch.utils.data.distributed import DistributedSampler
 from torch.cuda.amp import autocast
 from lib.train.trainers.misc import NativeScalerWithGradNormCount as NativeScaler
 
+def is_valid_number(x):
+        return not(math.isnan(x) or math.isinf(x) or x > 1e4)
+        
 def weightedMSE(D_out, label):
     return torch.mean((D_out - label.cuda()).abs() ** 2)
 

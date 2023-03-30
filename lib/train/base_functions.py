@@ -27,7 +27,7 @@ def names2datasets(name_list: list, settings, image_loader):
     assert isinstance(name_list, list)
     datasets = []
     for name in name_list:
-        assert name in ["LASOT", "GOT10K_vottrain", "GOT10K_votval", "GOT10K_train_full", "COCO17", "VID", "TRACKINGNET", "TNL2k"]
+        assert name in ["LASOT", "GOT10K_vottrain", "GOT10K_votval", "GOT10K_train_full", "COCO17", "VID", "TRACKINGNET", "TNL2k", "NAT"]
         if name == "LASOT":
             datasets.append(Lasot(settings.env.lasot_dir, split='train', image_loader=image_loader))
         if name == "TNL2k":
@@ -107,7 +107,7 @@ def build_dataloaders(cfg, settings):
     loader_train = LTRLoader('train', dataset_train, training=True, batch_size=cfg.TRAIN.BATCH_SIZE, shuffle=shuffle,
                              num_workers=cfg.TRAIN.NUM_WORKER, drop_last=True, stack_dim=1, sampler=train_sampler)
     
-    dataset_nat = sampler.TrackingSampler(datasets=names2datasets('NAT', settings, opencv_loader),
+    dataset_nat = sampler.TrackingSampler(datasets=names2datasets(['NAT'], settings, opencv_loader),
                                             p_datasets=cfg.DATA.TRAIN.DATASETS_RATIO,
                                             samples_per_epoch=cfg.DATA.TRAIN.SAMPLE_PER_EPOCH,
                                             max_gap=cfg.DATA.MAX_SAMPLE_INTERVAL, num_search_frames=settings.num_search,

@@ -109,7 +109,7 @@ class LTRTrainer(BaseTrainer):
         # print("Debug2 |", len(self.loaders[0]), len(self.loaders[1]), len(self.nat_loader))
         # Debug2 | 5000 833 5000
         print("Debug begin")
-        print(len(self.loaders[0]), len(self.nat_loader), len(enumerate(self.loaders[0])))
+        print(len(self.loaders[0]), len(self.nat_loader))
         print(self.loaders[0].batch_size, self.nat_loader.batch_size)
         for index in range(1, 1001):
             data_day = next(iter(self.loaders[0]))

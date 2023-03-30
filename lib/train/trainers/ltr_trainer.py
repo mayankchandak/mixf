@@ -112,6 +112,7 @@ class LTRTrainer(BaseTrainer):
         for data_iter_step, data in enumerate(self.loaders[0], 1):
             print(data_iter_step,data['template_images'].shape, data['search_images'].shape)
             print()
+        print("Debug end")
         for loader in self.loaders:
             if self.epoch % loader.epoch_interval == 0:
                 # 2021.1.10 Set epoch

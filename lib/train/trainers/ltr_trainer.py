@@ -63,7 +63,7 @@ class LTRTrainer(BaseTrainer):
         self._init_timing()
 
         self.optimizer.zero_grad()
-        print("Debug |", len(loader))
+        # print("Debug |", len(loader))
         for data_iter_step, data in enumerate(loader, 1):
             # get inputs
             if self.move_data_to_gpu:
@@ -106,7 +106,14 @@ class LTRTrainer(BaseTrainer):
 
     def train_epoch(self):
         """Do one epoch for each loader."""
-        print("Debug2 |", len(self.loaders[0]), len(self.loaders[1]), len(self.nat_loader))
+        # print("Debug2 |", len(self.loaders[0]), len(self.loaders[1]), len(self.nat_loader))
+        # Debug2 | 5000 833 5000
+        print("Debug begin")
+        for data_iter_step, data in enumerate(self.loaders[0], 1):
+            print(data_iter_step,end=" | ")
+            for key in data:
+                print(key, end=",")
+            print()
         for loader in self.loaders:
             if self.epoch % loader.epoch_interval == 0:
                 # 2021.1.10 Set epoch

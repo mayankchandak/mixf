@@ -130,5 +130,6 @@ class NAT(BaseVideoDataset):
             print(counter, key)
             counter += 1
             anno_frames[key] = [value[f_id, ...].clone() for f_id in frame_ids]
+            print(counter)
         print("Exit get frames")
         return frame_list, anno_frames, obj_meta

@@ -76,26 +76,26 @@ class LTRTrainer(BaseTrainer):
         counter = 0
         for data_iter_step in range(1, dataset_size + 1):
             counter+=1
-            print("Counter:", counter)
+            # print("Counter:", counter)
             day_data = next(loader_iter)
-            print("reached0")
+            # print("reached0")
             night_data = next(nat_loader_iter)
             # get inputs
-            print("reached")
+            # print("reached")
             if self.move_data_to_gpu:
                 day_data = day_data.to(self.device)
                 night_data = night_data.to(self.device)
-            print("reached1")
+            # print("reached1")
             day_data['epoch'] = self.epoch
-            print("reached2")
+            # print("reached2")
             day_data['settings'] = self.settings
-            print("reached3")
+            # print("reached3")
             night_data['epoch'] = self.epoch
-            print("reached4")
+            # print("reached4")
             night_data['settings'] = self.settings
-            print("reached5")
+            # print("reached5")
             night_template_out, night_search_out, _, _ = self.actor(night_data)
-            print("reached6")
+            # print("reached6")
             for param in self.Disc.parameters():
                 param.requires_grad = False
             print("reached7")

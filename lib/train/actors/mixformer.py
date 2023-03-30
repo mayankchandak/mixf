@@ -42,7 +42,7 @@ class MixFormerActor(BaseActor):
 
     def forward_pass(self, data, run_score_head):
         search_bboxes = box_xywh_to_xyxy(data['search_anno'][0].clone())
-        template, search, out_dict, _ = self.net(data['template_images'][0], data['template_images'][1], data['search_images'],
+        template, search, (out_dict, _) = self.net(data['template_images'][0], data['template_images'][1], data['search_images'],
                                run_score_head=run_score_head, gt_bboxes=search_bboxes)
         # out_dict: (B, N, C), outputs_coord: (1, B, N, C), target_query: (1, B, N, C)
         return template, search, out_dict

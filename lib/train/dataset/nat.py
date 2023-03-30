@@ -123,12 +123,12 @@ class NAT(BaseVideoDataset):
             anno = self.get_sequence_info(seq_id)
         # else:
         #     print(anno)
-        # print("reached here 2")
+        print("reached here 2")
         anno_frames = {}
         for key, value in anno.items():
             if value:
                 anno_frames[key] = [value[f_id, ...].clone() for f_id in frame_ids]
             else:
                 anno_frames[key] = [None for f_id in frame_ids]
-        # print("Exit get frames")
+        print("Exit get frames")
         return frame_list, anno_frames, obj_meta

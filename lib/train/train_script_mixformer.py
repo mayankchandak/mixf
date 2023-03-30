@@ -14,6 +14,7 @@ from lib.models.mixformer_vit import build_mixformer_vit
 
 # forward propagation related
 from lib.train.actors import MixFormerActor
+from lib.models.trans_discriminator import TransformerDiscriminator
 # for import modules
 import importlib
 
@@ -83,7 +84,18 @@ def run(settings):
     optimizer, lr_scheduler = get_optimizer_scheduler(net, cfg)
     use_amp = getattr(cfg.TRAIN, "AMP", False)
     accum_iter = getattr(cfg.TRAIN, "ACCUM_ITER", 1)
-    trainer = LTRTrainer(actor, [loader_train, loader_val], optimizer, settings, None, None, lr_scheduler, accum_iter=accum_iter, use_amp=use_amp, nat_loader=loader_nat)
+
+    model_Disc = TransformerDiscriminator(channels=256)
+    optimizer_D = torch.optim.Adam(model_Disc.parameters(), lr=cfg.TRAIN.BASE_LR_d, betas=(0.9, 0.99))
+    model_Disc.cuda().train()
+    
+    if settings.local_rank != -1:
+        model_Disc = DDP(model_Disc, device_ids=[settings.local_rank], find_unused_parameters=True)
+        settings.device = torch.device("cuda:%d" % settings.local_rank)
+    else:
+        settings.device = torch.device("cuda:0")
+
+    trainer = LTRTrainer(actor, [loader_train, loader_val], optimizer, settings, model_Disc, optimizer_D, lr_scheduler, accum_iter=accum_iter, use_amp=use_amp, nat_loader=loader_nat)
 
     # train process
     trainer.train(cfg.TRAIN.EPOCH, load_latest=True, fail_safe=True)

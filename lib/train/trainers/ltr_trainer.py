@@ -142,7 +142,7 @@ class LTRTrainer(BaseTrainer):
             if is_valid_number(loss_d.data.item()):
                 loss_d.backward() 
 
-            clip_grad_norm_(self.Disc.parameters(), 10)
+            clip_grad_norm_(self.Disc.parameters(), 0.1)
             self.optimizer_D.step()
             self.optimizer_D.zero_grad()
             

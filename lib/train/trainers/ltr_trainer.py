@@ -9,6 +9,9 @@ from torch.utils.data.distributed import DistributedSampler
 from torch.cuda.amp import autocast
 from lib.train.trainers.misc import NativeScalerWithGradNormCount as NativeScaler
 
+def weightedMSE(D_out, label):
+    return torch.mean((D_out - label.cuda()).abs() ** 2)
+
 class LTRTrainer(BaseTrainer):
     def __init__(self, actor, loaders, optimizer, settings, Disc, optimizer_D, lr_scheduler=None, accum_iter=1,
                  use_amp=False, shed_args=None, nat_loader=None):
@@ -70,37 +73,33 @@ class LTRTrainer(BaseTrainer):
         
         loader_iter = iter(loader)
         nat_loader_iter = iter(self.nat_loader)
+        source_label = 0
+        target_label = 1
         # for data_iter_step, data in enumerate(loader, 1):
         dataset_size = min(len(loader), len(self.nat_loader))
         print("Debug | Dataset size :", dataset_size)
-        counter = 0
         for data_iter_step in range(1, dataset_size + 1):
-            counter+=1
-            # print("Counter:", counter)
             day_data = next(loader_iter)
-            # print("reached0")
             night_data = next(nat_loader_iter)
-            # get inputs
-            # print("reached")
             if self.move_data_to_gpu:
                 day_data = day_data.to(self.device)
                 night_data = night_data.to(self.device)
-            # print("reached1")
             day_data['epoch'] = self.epoch
-            # print("reached2")
             day_data['settings'] = self.settings
-            # print("reached3")
+            
             night_data['epoch'] = self.epoch
-            # print("reached4")
             night_data['settings'] = self.settings
-            # print("reached5")
+            
             night_template_out, night_search_out, _, _ = self.actor(night_data)
-            # print("reached6")
+
             for param in self.Disc.parameters():
                 param.requires_grad = False
-            # print("reached7")
-            print("Shape |", night_template_out.shape, night_search_out.shape)
-            # Shape | torch.Size([2, 1024, 12, 12]) torch.Size([2, 1024, 24, 24])
+            Dzn = self.Disc(night_template_out)
+            Dxn = self.Disc(night_search_out)
+            D_source_label = torch.FloatTensor(Dzn.data.size()).fill_(source_label)
+            loss_adv = 0.1 * (weightedMSE(Dzn, D_source_label) +  weightedMSE(Dxn, D_source_label))
+            if is_valid_number(loss_adv.data.item()):
+                loss_adv.backward()
 
             # forward pass
             if not self.use_amp:
@@ -126,6 +125,23 @@ class LTRTrainer(BaseTrainer):
 
             if (data_iter_step + 1) % self.accum_iter == 0:
                 self.optimizer.zero_grad()
+            
+            for param in self.Disc.parameters():
+                param.requires_grad = True
+            night_template_out, night_search_out, day_template_out, day_search_out = \
+                night_template_out.detach(), night_search_out.detach(), day_template_out.detach(), day_search_out.detach()
+            Dn1, Dn2, Dd1, Dd2 = self.Disc(night_template_out), self.Disc(night_search_out), self.Disc(day_template_out), self.Disc(self.day_search_out)
+            Dt = torch.FloatTensor(Dn1.data.size()).fill_(target_label)
+            Ds = torch.FloatTensor(Dd1.data.size()).fill_(source_label)
+            loss_d = 0.1 * (weightedMSE(Dn1, Dt) + weightedMSE(Dn2, Dt) + weightedMSE(Dd1, Ds) + weightedMSE(Dd2, Ds))
+            if is_valid_number(loss_d.data.item()):
+                loss_d.backward() 
+
+            clip_grad_norm_(self.Disc.parameters(), 10)
+            self.optimizer_D.step()
+            self.optimizer_D.zero_grad()
+            
+
             torch.cuda.synchronize()
 
             # update statistics
@@ -135,7 +151,7 @@ class LTRTrainer(BaseTrainer):
             # print statistics
             self._print_stats(data_iter_step, loader, batch_size)
             # print("Debug |", counter)
-        print("End |", counter)
+        # print("End |", counter)
 
     def cycle_dataset(self, loader):
         """Do a cycle of training or validation."""

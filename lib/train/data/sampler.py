@@ -139,6 +139,22 @@ class TrackingSampler(torch.utils.data.Dataset):
                     template_frame_ids, search_frame_ids = self.get_frame_ids_trident(visible)
                 elif self.frame_sample_mode == "stark":
                     template_frame_ids, search_frame_ids = self.get_frame_ids_stark(visible, seq_info_dict["valid"])
+                elif self.frame_sample_mode == "interval":
+                    while search_frame_ids is None:
+                        base_frame_id = self._sample_visible_ids(visible, num_ids=1, min_id=self.num_template_frames - 1,
+                                                                 max_id=len(visible) - self.num_search_frames, allow_invisible=True)
+                        prev_frame_ids = self._sample_visible_ids(visible, num_ids=self.num_template_frames - 1,
+                                                                  min_id=base_frame_id[0] - self.max_gap - gap_increase,
+                                                                  max_id=base_frame_id[0], allow_invisible=True)
+                        if prev_frame_ids is None:
+                            gap_increase += 5
+                            continue
+                        template_frame_ids = base_frame_id + prev_frame_ids
+                        search_frame_ids = self._sample_visible_ids(visible, min_id=template_frame_ids[0] + 1,
+                                                                  max_id=template_frame_ids[0] + self.max_gap + gap_increase,
+                                                                  num_ids=self.num_search_frames, allow_invisible=True)
+                        # Increase gap until a frame is found
+                        gap_increase += 5
                 else:
                     raise ValueError("Illegal frame sample mode")
             else:

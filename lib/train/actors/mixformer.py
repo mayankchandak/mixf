@@ -23,7 +23,7 @@ class MixFormerActor(BaseActor):
             status  -  dict containing detailed losses
         """
         # forward pass
-        out_dict = self.forward_pass(data, run_score_head=self.run_score_head)
+        template, search, out_dict = self.forward_pass(data, run_score_head=self.run_score_head)
 
         # process the groundtruth
         gt_bboxes = data['search_anno']  # (Ns, batch, 4) (x1,y1,w,h)
@@ -38,14 +38,14 @@ class MixFormerActor(BaseActor):
         # compute losses
         loss, status = self.compute_losses(out_dict, gt_bboxes[0], labels=labels)
 
-        return loss, status
+        return template, search, loss, status
 
     def forward_pass(self, data, run_score_head):
         search_bboxes = box_xywh_to_xyxy(data['search_anno'][0].clone())
-        out_dict, _ = self.net(data['template_images'][0], data['template_images'][1], data['search_images'],
+        template, search, out_dict, _ = self.net(data['template_images'][0], data['template_images'][1], data['search_images'],
                                run_score_head=run_score_head, gt_bboxes=search_bboxes)
         # out_dict: (B, N, C), outputs_coord: (1, B, N, C), target_query: (1, B, N, C)
-        return out_dict
+        return template, search, out_dict
 
     def compute_losses(self, pred_dict, gt_bbox, return_status=True, labels=None):
         # Get boxes

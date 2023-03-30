@@ -61,6 +61,7 @@ class LTRTrainer(BaseTrainer):
 
         self.actor.train(loader.training)
         torch.set_grad_enabled(loader.training)
+        self.Disc.train()
 
         self._init_timing()
 
@@ -70,21 +71,32 @@ class LTRTrainer(BaseTrainer):
         loader_iter = iter(loader)
         nat_loader_iter = iter(self.nat_loader)
         # for data_iter_step, data in enumerate(loader, 1):
+        print("Debug | Dataset size :", min(len(loader), len(self.nat_loader)))
         for data_iter_step in range(1, min(len(loader), len(self.nat_loader)) + 1):
             # counter+=1
             day_data = next(loader_iter)
+            night_data = next(nat_loader_iter)
             # get inputs
             if self.move_data_to_gpu:
                 day_data = day_data.to(self.device)
+                night_data = night_data.to(self.device)
 
             day_data['epoch'] = self.epoch
             day_data['settings'] = self.settings
+            night_data['epoch'] = self.epoch
+            night_data['settings'] = self.settings
+
+            night_template_out, night_search_out, _, _ = self.actor(night_data)
+            for param in self.Disc.parameters():
+                param.requires_grad = False
+            print("Shape |", night_template_out.shape, night_search_out.shape)
+
             # forward pass
             if not self.use_amp:
-                loss, stats = self.actor(day_data)
+                day_template_out, day_search_out, loss, stats = self.actor(day_data)
             else:
                 with autocast():
-                    loss, stats = self.actor(day_data)
+                    day_template_out, day_search_out, loss, stats = self.actor(day_data)
 
             loss /= self.accum_iter
             # backward pass and update weights

@@ -302,7 +302,7 @@ class MixFormer(nn.Module):
         template, online_template, search = self.backbone(template, online_template, search)
         # search shape: (b, 384, 20, 20)
         # Forward the corner head
-        return self.forward_box_head(search)
+        return template, search, self.forward_box_head(search)
 
     def forward_test(self, search, run_score_head=True, gt_bboxes=None):
         # search: (b, c, h, w)

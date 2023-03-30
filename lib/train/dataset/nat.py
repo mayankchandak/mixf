@@ -125,15 +125,10 @@ class NAT(BaseVideoDataset):
         #     print(anno)
         # print("reached here 2")
         anno_frames = {}
+        counter = 0
         for key, value in anno.items():
-            print(key, value.shape, frame_ids, len(frame_ids))
-            if value:
-                try:
-                    anno_frames[key] = [value[f_id, ...].clone() for f_id in frame_ids]
-                except:
-                    print("Error here")
-            else:
-                anno_frames[key] = [None for f_id in frame_ids]
-            print("Exit")
+            print(counter)
+            counter += 1
+            anno_frames[key] = [value[f_id, ...].clone() for f_id in frame_ids]
         print("Exit get frames")
         return frame_list, anno_frames, obj_meta

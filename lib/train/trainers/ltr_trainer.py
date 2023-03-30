@@ -112,7 +112,7 @@ class LTRTrainer(BaseTrainer):
                 if isinstance(loader.sampler, DistributedSampler):
                     loader.sampler.set_epoch(self.epoch)
                 self.cycle_dataset(loader)
-
+        print("Debug2 |", len(self.loaders[0], self.loaders[1], self.nat_loader))
         # if self.epoch % self.nat_loader.epoch_interval == 0:
         #     if isinstance(self.nat_loader.sampler, DistributedSampler):
         #         nat_loader.sampler.set_epoch(self.epoch)

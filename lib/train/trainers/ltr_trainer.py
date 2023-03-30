@@ -64,10 +64,10 @@ class LTRTrainer(BaseTrainer):
 
         self.optimizer.zero_grad()
         counter = 0
-        for data_iter_step, data in enumerate(loader, 1):
-        # for data_iter_step in range(1, len(loader) + 1):
+        # for data_iter_step, data in enumerate(loader, 1):
+        for data_iter_step in range(1, len(loader) + 1):
             counter+=1
-            # data = next(iter(loader))
+            data = next(iter(loader))
             # get inputs
             if self.move_data_to_gpu:
                 data = data.to(self.device)

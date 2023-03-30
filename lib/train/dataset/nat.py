@@ -89,8 +89,8 @@ class NAT(BaseVideoDataset):
 
     def get_sequence_info(self, seq_id):
         anno_path = os.path.join(self.root, 'pseudo_anno', self.sequence_list[seq_id] + "_gt.txt")
-        print(seq_path)
-        bbox = self._read_bb_anno(seq_path)
+        print(anno_path)
+        bbox = self._read_bb_anno(anno_path)
 
         valid = (bbox[:, 2] > 0) & (bbox[:, 3] > 0)
         # visible, visible_ratio = self._read_target_visible(seq_path)

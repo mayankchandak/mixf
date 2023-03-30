@@ -63,8 +63,9 @@ class LTRTrainer(BaseTrainer):
         self._init_timing()
 
         self.optimizer.zero_grad()
-        # print("Debug |", len(loader))
-        for data_iter_step, data in enumerate(loader, 1):
+        # for data_iter_step, data in enumerate(loader, 1):
+        for data_iter_step in range(1, len(loader) + 1):
+            data = next(iter(loader))
             # get inputs
             if self.move_data_to_gpu:
                 data = data.to(self.device)
@@ -106,41 +107,12 @@ class LTRTrainer(BaseTrainer):
 
     def train_epoch(self):
         """Do one epoch for each loader."""
-        # print("Debug2 |", len(self.loaders[0]), len(self.loaders[1]), len(self.nat_loader))
-        # Debug2 | 5000 833 5000
-        # print("Debug begin")
-        # print(len(self.loaders[0]), len(self.nat_loader))
-        # print(self.loaders[0].batch_size, self.nat_loader.batch_size)
-        # for index in range(1, 1001):
-        #     data_day = next(iter(self.loaders[0]))
-        #     data_night = next(iter(self.loaders[1]))
-        #     print("data_day ->", end=" ")
-        #     for key in data_day:
-        #         print(key, end=",")
-        #     print()
-        #     print(data_day['search_images'].shape, data_day['template_images'].shape)
-        #     print("data_night ->", end=" ")
-        #     for key in data_night:
-        #         print(key, end=",")
-        #     print()
-        #     print(data_night['search_images'].shape, data_night['template_images'].shape)
-        # for data_iter_step, data in enumerate(self.loaders[0], 1):
-        #     data_night = self.nat_loader
-        #     print(data_iter_step,data['template_images'].shape, data['search_images'].shape)
-
-        #     print()
-        # print("Debug end")
         for loader in self.loaders:
             if self.epoch % loader.epoch_interval == 0:
                 # 2021.1.10 Set epoch
                 if isinstance(loader.sampler, DistributedSampler):
                     loader.sampler.set_epoch(self.epoch)
                 self.cycle_dataset(loader)
-
-        # if self.epoch % self.nat_loader.epoch_interval == 0:
-        #     if isinstance(self.nat_loader.sampler, DistributedSampler):
-        #         nat_loader.sampler.set_epoch(self.epoch)
-        #     self.cycle_dataset(self.nat_loader, isnat=True)
 
         self._stats_new_epoch()
         if self.settings.local_rank in [-1, 0]:

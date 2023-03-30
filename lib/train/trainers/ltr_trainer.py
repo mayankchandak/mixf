@@ -106,7 +106,7 @@ class LTRTrainer(BaseTrainer):
 
     def train_epoch(self):
         """Do one epoch for each loader."""
-        print("Debug2 |", len(self.loaders[0], self.loaders[1], self.nat_loader))
+        print("Debug2 |", len(self.loaders[0]), len(self.loaders[1]), len(self.nat_loader))
         for loader in self.loaders:
             if self.epoch % loader.epoch_interval == 0:
                 # 2021.1.10 Set epoch

@@ -108,14 +108,14 @@ def build_dataloaders(cfg, settings):
                              num_workers=cfg.TRAIN.NUM_WORKER, drop_last=True, stack_dim=1, sampler=train_sampler)
     
     dataset_nat = sampler.TrackingSampler(datasets=names2datasets(['NAT'], settings, opencv_loader),
-                                            p_datasets=cfg.DATA.TRAIN.DATASETS_RATIO,
+                                            p_datasets=None,
                                             samples_per_epoch=cfg.DATA.TRAIN.SAMPLE_PER_EPOCH,
                                             max_gap=cfg.DATA.MAX_SAMPLE_INTERVAL, num_search_frames=settings.num_search,
                                             num_template_frames=settings.num_template, processing=data_processing_train,
-                                            frame_sample_mode=sampler_mode, train_cls=train_score, pos_prob=0.5)
+                                            frame_sample_mode='interval', train_cls=False, pos_prob=0.5)
 
     nat_sampler = DistributedSampler(dataset_nat) if settings.local_rank != -1 else None
-    loader_nat = LTRLoader('nat', dataset_nat, training=True, batch_size=cfg.TRAIN.BATCH_SIZE, shuffle=shuffle,
+    loader_nat = LTRLoader('nat', dataset_nat, training=False, batch_size=cfg.TRAIN.BATCH_SIZE, shuffle=shuffle,
                              num_workers=cfg.TRAIN.NUM_WORKER, drop_last=True, stack_dim=1, sampler=nat_sampler)
 
     # Validation samplers and loaders

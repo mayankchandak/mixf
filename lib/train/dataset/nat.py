@@ -128,6 +128,8 @@ class NAT(BaseVideoDataset):
         counter = 0
         for key, value in anno.items():
             print(counter, key)
+            if(counter == 3):
+                prin(value)
             counter += 1
             anno_frames[key] = [value[f_id, ...].clone() for f_id in frame_ids]
             print(counter)

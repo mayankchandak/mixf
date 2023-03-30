@@ -111,6 +111,7 @@ class NAT(BaseVideoDataset):
 
     def get_frames(self, seq_id, frame_ids, anno=None):
         # seq_path = self._get_sequence_path(seq_id)
+        print("get_frame called")
         seq_path = os.path.join(self.root, 'NAT2021_train', 'train_clip', self.sequence_list[seq_id])
         obj_meta = self.sequence_meta_info[self.sequence_list[seq_id]]
 

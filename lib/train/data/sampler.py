@@ -183,6 +183,8 @@ class TrackingSampler(torch.utils.data.Dataset):
 
                 # check whether data is valid
                 valid = data['valid']
+                if dataset.get_name() == 'nat':
+                    print(valid)
             except:
                 valid = False
             # print(dataset, "Template images |", data['template_images'].shape)

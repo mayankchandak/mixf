@@ -5,6 +5,8 @@ import collections
 from torch._six import string_classes
 int_classes = int
 from lib.utils import TensorDict, TensorList
+import warnings
+warnings.simplefilter("ignore", UserWarning)
 
 
 def _check_use_shared_memory():

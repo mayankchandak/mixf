@@ -108,30 +108,30 @@ class LTRTrainer(BaseTrainer):
         """Do one epoch for each loader."""
         # print("Debug2 |", len(self.loaders[0]), len(self.loaders[1]), len(self.nat_loader))
         # Debug2 | 5000 833 5000
-        print("Debug begin")
-        print(len(self.loaders[0]), len(self.nat_loader))
-        print(self.loaders[0].batch_size, self.nat_loader.batch_size)
-        for index in range(1, 1001):
-            data_day = next(iter(self.loaders[0]))
-            data_night = next(iter(self.loaders[1]))
-            print("data_day ->", end=" ")
-            for key in data_day:
-                print(key, end=",")
-            print()
-            print(data_day['search_images'].shape, data_day['template_images'].shape)
-            # print(data_day['template_anno'], data_day['search_anno'])
-            print("data_night ->", end=" ")
-            for key in data_night:
-                print(key, end=",")
-            print([key for key in data_night['template_anno']], [key for key in data_night['search_anno']])
-            print()
-            print(data_night['search_images'].shape, data_night['template_images'].shape)
-        # for data_iter_step, data in enumerate(self.loaders[0], 1):
-        #     data_night = self.nat_loader
-        #     print(data_iter_step,data['template_images'].shape, data['search_images'].shape)
-
+        # print("Debug begin")
+        # print(len(self.loaders[0]), len(self.nat_loader))
+        # print(self.loaders[0].batch_size, self.nat_loader.batch_size)
+        # for index in range(1, 1001):
+        #     data_day = next(iter(self.loaders[0]))
+        #     data_night = next(iter(self.loaders[1]))
+        #     print("data_day ->", end=" ")
+        #     for key in data_day:
+        #         print(key, end=",")
         #     print()
-        print("Debug end")
+        #     print(data_day['search_images'].shape, data_day['template_images'].shape)
+        #     # print(data_day['template_anno'], data_day['search_anno'])
+        #     print("data_night ->", end=" ")
+        #     for key in data_night:
+        #         print(key, end=",")
+        #     # print([key for key in data_night['template_anno']], [key for key in data_night['search_anno']])
+        #     print()
+        #     print(data_night['search_images'].shape, data_night['template_images'].shape)
+        # # for data_iter_step, data in enumerate(self.loaders[0], 1):
+        # #     data_night = self.nat_loader
+        # #     print(data_iter_step,data['template_images'].shape, data['search_images'].shape)
+
+        # #     print()
+        # print("Debug end")
         for loader in self.loaders:
             if self.epoch % loader.epoch_interval == 0:
                 # 2021.1.10 Set epoch

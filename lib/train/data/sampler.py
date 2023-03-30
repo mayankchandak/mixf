@@ -193,7 +193,7 @@ class TrackingSampler(torch.utils.data.Dataset):
                 valid = False
             # print(dataset, "Template images |", data['template_images'].shape)
             # print(valid)
-        print("Exit getitem", data['valid'], dataset.get_name())
+        # print("Exit getitem", data['valid'], dataset.get_name())
         return data
 
     def getitem_cls(self):

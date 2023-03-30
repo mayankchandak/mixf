@@ -119,9 +119,11 @@ class LTRTrainer(BaseTrainer):
                 print(key, end=",")
             print()
             print(data_day['search_images'].shape, data_day['template_images'].shape)
+            print(data_day['template_anno'], data_day['search_anno'])
             print("data_night ->", end=" ")
             for key in data_night:
                 print(key, end=",")
+            print(data_night['template_anno'], data_night['search_anno'])
             print()
             print(data_night['search_images'].shape, data_night['template_images'].shape)
         # for data_iter_step, data in enumerate(self.loaders[0], 1):

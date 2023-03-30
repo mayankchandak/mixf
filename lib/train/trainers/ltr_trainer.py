@@ -73,7 +73,7 @@ class LTRTrainer(BaseTrainer):
         # for data_iter_step, data in enumerate(loader, 1):
         dataset_size = min(len(loader), len(self.nat_loader))
         print("Debug | Dataset size :", dataset_size)
-        
+        counter = 0
         for data_iter_step in range(1, dataset_size + 1):
             counter+=1
             print("Counter:", counter)

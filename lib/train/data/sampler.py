@@ -185,6 +185,7 @@ class TrackingSampler(torch.utils.data.Dataset):
                 valid = data['valid']
             except:
                 valid = False
+            print(valid)
         print("Exit getitem", data['valid'])
         return data
 

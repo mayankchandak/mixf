@@ -98,8 +98,9 @@ class LTRTrainer(BaseTrainer):
             # print("reached6")
             for param in self.Disc.parameters():
                 param.requires_grad = False
-            print("reached7")
+            # print("reached7")
             print("Shape |", night_template_out.shape, night_search_out.shape)
+            # Shape | torch.Size([2, 1024, 12, 12]) torch.Size([2, 1024, 24, 24])
 
             # forward pass
             if not self.use_amp:

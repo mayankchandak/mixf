@@ -290,6 +290,11 @@ class MixFormer(nn.Module):
         self.backbone = backbone
         self.box_head = box_head
         self.head_type = head_type
+        self.newlayer = nn.Sequential(
+            nn.ConvTranspose2d(in_channels=1024, out_channels=512, kernel_size=3, stride=2, padding=1),
+            nn.ConvTranspose2d(in_channels=512, out_channels=256, kernel_size=3, stride=2, padding=1),
+            nn.Upsample(size=(128, 128), mode='bilinear', align_corners=True)
+        )
 
     def forward(self, template, online_template, search, run_score_head=False, gt_bboxes=None):
         # search: (b, c, h, w)
@@ -302,7 +307,7 @@ class MixFormer(nn.Module):
         template, online_template, search = self.backbone(template, online_template, search)
         # search shape: (b, 384, 20, 20)
         # Forward the corner head
-        return template, search, self.forward_box_head(search)
+        return self.newlayer(template), self.newlayer(search), self.forward_box_head(search)
 
     def forward_test(self, search, run_score_head=True, gt_bboxes=None):
         # search: (b, c, h, w)

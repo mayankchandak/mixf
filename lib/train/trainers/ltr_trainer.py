@@ -201,7 +201,7 @@ class LTRTrainer(BaseTrainer):
                     loader.sampler.set_epoch(self.epoch)
                 if isinstance(self.nat_loader.sampler, DistributedSampler):
                     self.nat_loader.sampler.set_epoch(self.epoch)
-                if len(loader) == 5000:
+                if loader is self.loaders[0]:
                     self.cycle_dataset_with_nat(loader)
                 else:
                     self.cycle_dataset(loader)

@@ -71,8 +71,10 @@ class LTRTrainer(BaseTrainer):
         loader_iter = iter(loader)
         nat_loader_iter = iter(self.nat_loader)
         # for data_iter_step, data in enumerate(loader, 1):
-        print("Debug | Dataset size :", min(len(loader), len(self.nat_loader)))
-        for data_iter_step in range(1, min(len(loader), len(self.nat_loader)) + 1):
+        dataset_size = min(len(loader), len(self.nat_loader))
+        print("Debug | Dataset size :", dataset_size)
+        
+        for data_iter_step in range(1, dataset_size + 1):
             counter+=1
             print("Counter:", counter)
             day_data = next(loader_iter)

@@ -123,5 +123,5 @@ class NAT(BaseVideoDataset):
         anno_frames = {}
         for key, value in anno.items():
             anno_frames[key] = [value[f_id, ...].clone() for f_id in frame_ids]
-
+        print("Exit get frames")
         return frame_list, anno_frames, obj_meta

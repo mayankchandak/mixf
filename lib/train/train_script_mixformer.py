@@ -71,7 +71,7 @@ def run(settings):
     else:
         settings.device = torch.device("cuda:0")
     settings.deep_sup = getattr(cfg.TRAIN, "DEEP_SUPERVISION", False)
-    # settings.save_every_epoch = True
+    settings.save_every_epoch = True
     # Loss functions and Actors
     if settings.script_name in ["mixformer_vit"]:
         objective = {'ciou': ciou_loss, 'l1': l1_loss}

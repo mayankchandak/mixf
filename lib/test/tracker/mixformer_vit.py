@@ -73,7 +73,7 @@ class MixFormer(BaseTracker):
         # (384, 384, 3) 0.16501933820369574 (384, 384) (384, 384, 3) torch.Size([1, 3, 384, 384]) torch.Size([1, 3, 192, 192]) torch.Size([1, 3, 192, 192])
         # print(x_patch_arr.shape, resize_factor, x_amask_arr.shape, x_patch_arr.shape, search.shape, self.template.shape, self.online_template.shape)
         with torch.no_grad():
-            out_dict, _ = self.network(self.template, self.online_template, search)
+            template, search, (out_dict, _) = self.network(self.template, self.online_template, search)
 
         pred_boxes = out_dict['pred_boxes'].view(-1, 4)
         # Baseline: Take the mean of all pred boxes as the final result

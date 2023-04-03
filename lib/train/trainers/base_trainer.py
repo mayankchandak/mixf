@@ -186,7 +186,7 @@ class BaseTrainer:
                 checkpoint_path = os.path.expanduser(checkpoint)
         else:
             raise TypeError
-
+        print("loading model from", checkpoint_path)
         # Load network
         checkpoint_dict = torch.load(checkpoint_path, map_location='cpu')
 

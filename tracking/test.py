@@ -12,7 +12,7 @@ from lib.test.evaluation.tracker import Tracker
 
 
 def run_tracker(tracker_name, tracker_param, run_id=None, dataset_name='otb', sequence=None, debug=0, threads=0,
-                num_gpus=8, tracker_params=None):
+                num_gpus=1, tracker_params=None):
     """Run tracker on sequence or dataset.
     args:
         tracker_name: Name of tracking method.
@@ -42,7 +42,7 @@ def main():
     parser.add_argument('--dataset_name', type=str, default='nat2021_test', help='Name of dataset (otb, nfs, uav, tpl, vot, tn, gott, gotv, lasot).')
     parser.add_argument('--sequence', type=str, default=None, help='Sequence number or name.')
     parser.add_argument('--debug', type=int, default=0, help='Debug level.')
-    parser.add_argument('--threads', type=int, default=8, help='Number of threads.')
+    parser.add_argument('--threads', type=int, default=1, help='Number of threads.')
     parser.add_argument('--num_gpus', type=int, default=1)
 
     parser.add_argument('--params__model', type=str, default='mixformer_vit_disc15.pth', help="Tracking model path.")

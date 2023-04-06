@@ -697,6 +697,7 @@ def get_mixformer_model(config, **kwargs):
     if config.MODEL.BACKBONE.PRETRAINED:
         try:
             ckpt_path = config.MODEL.BACKBONE.PRETRAINED_PATH
+            print(ckpt_path)
             ckpt = torch.load(ckpt_path, map_location='cpu')
             missing_keys, unexpected_keys = msvit.load_state_dict(ckpt, strict=False)
             if is_main_process():

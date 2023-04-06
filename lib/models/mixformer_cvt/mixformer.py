@@ -694,19 +694,19 @@ def get_mixformer_model(config, **kwargs):
         spec=msvit_spec
     )
 
-    if config.MODEL.BACKBONE.PRETRAINED:
-        try:
-            ckpt_path = config.MODEL.BACKBONE.PRETRAINED_PATH
-            print(ckpt_path)
-            ckpt = torch.load(ckpt_path, map_location='cpu')
-            missing_keys, unexpected_keys = msvit.load_state_dict(ckpt['net'], strict=False)
-            if is_main_process():
-                print("Load pretrained backbone checkpoint from:", ckpt_path)
-                print("missing keys:", missing_keys)
-                print("unexpected keys:", unexpected_keys)
-                print("Loading pretrained CVT done.")
-        except:
-            print("Warning: Pretrained CVT weights are not loaded")
+    # if config.MODEL.BACKBONE.PRETRAINED:
+    #     try:
+    #         ckpt_path = config.MODEL.BACKBONE.PRETRAINED_PATH
+    #         print(ckpt_path)
+    #         ckpt = torch.load(ckpt_path, map_location='cpu')
+    #         missing_keys, unexpected_keys = msvit.load_state_dict(ckpt['net'], strict=False)
+    #         if is_main_process():
+    #             print("Load pretrained backbone checkpoint from:", ckpt_path)
+    #             print("missing keys:", missing_keys)
+    #             print("unexpected keys:", unexpected_keys)
+    #             print("Loading pretrained CVT done.")
+    #     except:
+    #         print("Warning: Pretrained CVT weights are not loaded")
 
     return msvit
 

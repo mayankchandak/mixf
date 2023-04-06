@@ -13,7 +13,8 @@ class MixFormer(BaseTracker):
     def __init__(self, params, dataset_name):
         super(MixFormer, self).__init__(params)
         network = build_mixformer_cvt(params.cfg)
-        network.load_state_dict(torch.load(self.params.checkpoint, map_location='cpu')['net'], strict=True)
+        print("Loading from :", self.params.checkpoint)
+        network.load_state_dict(torch.load(self.params.checkpoint, map_location='cpu')['net'], strict=False)
         self.cfg = params.cfg
         self.network = network.cuda()
         self.network.eval()

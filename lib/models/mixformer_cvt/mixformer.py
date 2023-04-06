@@ -699,7 +699,7 @@ def get_mixformer_model(config, **kwargs):
             ckpt_path = config.MODEL.BACKBONE.PRETRAINED_PATH
             print(ckpt_path)
             ckpt = torch.load(ckpt_path, map_location='cpu')
-            missing_keys, unexpected_keys = msvit.load_state_dict(ckpt, strict=False)
+            missing_keys, unexpected_keys = msvit.load_state_dict(ckpt['net'], strict=False)
             if is_main_process():
                 print("Load pretrained backbone checkpoint from:", ckpt_path)
                 print("missing keys:", missing_keys)

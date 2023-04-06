@@ -5,8 +5,8 @@
 
 ##########-------------- MixFormer-22k-----------------##########
 ### LaSOT test and evaluation
-python tracking/test.py mixformer_cvt_online baseline --dataset lasot --threads 32 --num_gpus 8 --params__model mixformer_cvt_online_22k.pth.tar --params__search_area_scale 4.55
-python tracking/analysis_results.py --dataset_name lasot --tracker_param baseline
+# python tracking/test.py mixformer_cvt_online baseline --dataset lasot --threads 32 --num_gpus 8 --params__model mixformer_cvt_online_22k.pth.tar --params__search_area_scale 4.55
+# python tracking/analysis_results.py --dataset_name lasot --tracker_param baseline
 
 ### TrackingNet test and pack
 #python tracking/test.py mixformer_cvt_online baseline --dataset trackingnet --threads 32 --num_gpus 8 --params__model mixformer_cvt_online_22k.pth.tar --params__search_area_scale 4.5
@@ -54,7 +54,7 @@ python tracking/analysis_results.py --dataset_name lasot --tracker_param baselin
 #python lib/test/utils/transform_trackingnet.py --tracker_name mixformer_cvt_online --cfg_name baseline_1k
 
 ### MixFormer-1k-got-only GOT10k test and pack
-#python tracking/test.py mixformer_cvt_online baseline_1k --dataset got10k_test --threads 32 --num_gpus 8 --params__model mixformer_cvt_online_got_1k.pth.tar --params__search_area_scale 4.55
+python tracking/test.py mixformer_cvt_online baseline_1k --dataset nat2021_test --threads 0 --num_gpus 1 --params__model mixformer_online_got_1k.pth.tar --params__search_area_scale 4.55
 #python lib/test/utils/transform_got10k.py --tracker_name mixformer_cvt_online --cfg_name baseline_1k
 
 #python tracking/test.py mixformer_cvt_online baseline_1k --dataset got10k_test --threads 32 --num_gpus 32 --params__model mixformer_cvt_online_1k.pth.tar --params__search_area_scale 4.55

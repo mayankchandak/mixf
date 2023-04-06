@@ -296,7 +296,7 @@ class Tracker:
         model = ''
         if tracker_params is not None and 'model' in tracker_params:
             model = tracker_params['model']
-        params = param_module.parameters(self.parameter_name, model, search_area_scale)
+        params = param_module.parameters(model, search_area_scale)
         if tracker_params is not None:
             for param_k, v in tracker_params.items():
                 setattr(params, param_k, v)

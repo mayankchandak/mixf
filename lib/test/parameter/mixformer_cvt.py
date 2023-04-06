@@ -21,7 +21,7 @@ def parameters(yaml_name: str, search_area_scale=None):
     params.search_size = cfg.TEST.SEARCH_SIZE
 
     # Network checkpoint path
-    params.checkpoint = os.path.join(save_dir, "models/TSP_Online_ep0430.pth.tar")  # 470
+    params.checkpoint = os.path.join(save_dir, "models/mixformer_online_got_1k.pth.tar")  # 470
 
     # whether to save boxes from all queries
     params.save_all_boxes = False

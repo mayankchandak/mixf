@@ -304,7 +304,9 @@ class MixFormer(nn.Module):
             online_template = online_template.squeeze(0)
         if search.dim() == 5:
             search = search.squeeze(0)
+        print("before backbone:", template.shape, search.shape)
         template, online_template, search = self.backbone(template, online_template, search)
+        print("after backbone:", template.shape, search.shape)
         # search shape: (b, 384, 20, 20)
         # Forward the corner head
         return self.newlayer(template), self.newlayer(search), self.forward_box_head(search)

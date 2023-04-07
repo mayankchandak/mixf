@@ -12,6 +12,7 @@ from lib.models.mixformer_vit.head import build_box_head
 from lib.models.mixformer_vit.utils import to_2tuple
 from lib.utils.box_ops import box_xyxy_to_cxcywh, box_cxcywh_to_xyxy
 from lib.models.mixformer_vit.pos_utils import get_2d_sincos_pos_embed
+from lib.models.reconstructor import Reconstructor
 
 
 class PatchEmbed(nn.Module):
@@ -295,6 +296,7 @@ class MixFormer(nn.Module):
             nn.ConvTranspose2d(in_channels=512, out_channels=256, kernel_size=3, stride=2, padding=1),
             nn.Upsample(size=(128, 128), mode='bilinear', align_corners=True)
         )
+        self.recons = Reconstructor()
 
     def forward(self, template, online_template, search, run_score_head=False, gt_bboxes=None):
         # search: (b, c, h, w)
@@ -304,10 +306,14 @@ class MixFormer(nn.Module):
             online_template = online_template.squeeze(0)
         if search.dim() == 5:
             search = search.squeeze(0)
-        print("before backbone:", template.shape, search.shape)
+        # print("before backbone:", template.shape, search.shape)
+        # before backbone: torch.Size([10, 3, 192, 192]) torch.Size([10, 3, 384, 384])
         template, online_template, search = self.backbone(template, online_template, search)
-        print("after backbone:", template.shape, search.shape)
-        # search shape: (b, 384, 20, 20)
+        # print("after backbone:", template.shape, search.shape)
+        # after backbone: torch.Size([10, 1024, 12, 12]) torch.Size([10, 1024, 24, 24])
+        recons_template = self.recons(template)
+        recons_search = self.recons(search)
+        print("after recons:", recons_template.shape, recons_search.shape)
         # Forward the corner head
         return self.newlayer(template), self.newlayer(search), self.forward_box_head(search)
 

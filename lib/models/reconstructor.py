@@ -12,7 +12,9 @@ class Reconstructor(nn.Module):
         self.bn3 = nn.BatchNorm2d(128)
         self.conv4 = nn.ConvTranspose2d(in_channels=128, out_channels=64, kernel_size=2, stride=2)
         self.bn4 = nn.BatchNorm2d(64)
-        self.conv5 = nn.ConvTranspose2d(in_channels=64, out_channels=3, kernel_size=2, stride=2)
+        self.conv5 = nn.ConvTranspose2d(in_channels=64, out_channels=32, kernel_size=2, stride=2)
+        self.bn5 = nn.BatchNorm2d(32)
+        self.conv6 = nn.ConvTranspose2d(in_channels=32, out_channels=3, kernel_size=2, stride=2)
         
     def forward(self, x):
         x = self.conv1(x)
@@ -28,5 +30,9 @@ class Reconstructor(nn.Module):
         x = self.bn4(x)
         x = nn.functional.relu(x)
         x = self.conv5(x)
+        x = self.bn5(x)
+        x = nn.functional.relu(x)
+        x = self.conv6(x)
+        x = nn.functional.interpolate(x, size=(192,192), mode='bilinear', align_corners=True)
         
         return x

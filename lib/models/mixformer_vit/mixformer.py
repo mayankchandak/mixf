@@ -314,6 +314,7 @@ class MixFormer(nn.Module):
         recons_template = self.recons(template)
         recons_search = self.recons(search)
         print("after recons:", recons_template.shape, recons_search.shape)
+        # after recons: torch.Size([10, 3, 384, 384]) torch.Size([10, 3, 768, 768])
         # Forward the corner head
         return self.newlayer(template), self.newlayer(search), self.forward_box_head(search)
 

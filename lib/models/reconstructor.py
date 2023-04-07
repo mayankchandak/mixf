@@ -2,7 +2,7 @@ import torch.nn as nn
 
 class Reconstructor(nn.Module):
     def __init__(self):
-        super(UpSampleNet, self).__init__()
+        super(Reconstructor(), self).__init__()
         
         self.conv1 = nn.ConvTranspose2d(in_channels=1024, out_channels=512, kernel_size=2, stride=2)
         self.bn1 = nn.BatchNorm2d(512)

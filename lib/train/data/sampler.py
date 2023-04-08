@@ -186,6 +186,7 @@ class TrackingSampler(torch.utils.data.Dataset):
                 data = self.processing(data)
                 for key in data:
                     print(key)
+                print(len(data['template_images']))
                 # if dataset.get_name() == 'nat':
                 #     print('nat')
                 # check whether data is valid

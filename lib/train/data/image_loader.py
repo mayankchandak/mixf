@@ -44,6 +44,7 @@ def jpeg4py_loader(path):
 
 def opencv_loader(path):
     """ Read image using opencv's imread function and returns it in rgb format"""
+    print("using opencv_loader")
     try:
         im = cv.imread(path, cv.IMREAD_COLOR)
 
@@ -57,6 +58,7 @@ def opencv_loader(path):
 
 def jpeg4py_loader_w_failsafe(path):
     """ Image reading using jpeg4py https://github.com/ajkxyz/jpeg4py"""
+    print("using jpeg4py_w_failsafe")
     try:
         return jpeg4py.JPEG(path).decode()
     except:

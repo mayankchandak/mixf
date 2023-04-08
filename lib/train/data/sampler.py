@@ -171,7 +171,7 @@ class TrackingSampler(torch.utils.data.Dataset):
                 template_masks = template_anno['mask'] if 'mask' in template_anno else [torch.zeros((H, W))] * self.num_template_frames
                 search_masks = search_anno['mask'] if 'mask' in search_anno else [torch.zeros((H, W))] * self.num_search_frames
 
-                print("Inside sampler")
+                print("Inside sampler", template_frames.shape, search_frames.shape)
 
                 data = TensorDict({'template_images': template_frames,
                                    'template_anno': template_anno['bbox'],

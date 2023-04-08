@@ -23,7 +23,7 @@ class MixFormerActor(BaseActor):
             status  -  dict containing detailed losses
         """
         # forward pass
-        template, search, out_dict = self.forward_pass(data, run_score_head=self.run_score_head)
+        recons_loss, template, search, out_dict = self.forward_pass(data, run_score_head=self.run_score_head)
 
         # process the groundtruth
         gt_bboxes = data['search_anno']  # (Ns, batch, 4) (x1,y1,w,h)
@@ -36,18 +36,18 @@ class MixFormerActor(BaseActor):
                 raise Exception("Please setting proper labels for score branch.")
 
         # compute losses
-        loss, status = self.compute_losses(out_dict, gt_bboxes[0], labels=labels)
+        loss, status = self.compute_losses(out_dict, recons_loss, gt_bboxes[0], labels=labels)
 
         return template, search, loss, status
 
     def forward_pass(self, data, run_score_head):
         search_bboxes = box_xywh_to_xyxy(data['search_anno'][0].clone())
-        template, search, (out_dict, _) = self.net(data['template_images'][0], data['template_images'][1], data['search_images'],
+        recons_loss, template, search, (out_dict, _) = self.net(data['template_images'][0], data['template_images'][1], data['search_images'],
                                run_score_head=run_score_head, gt_bboxes=search_bboxes)
         # out_dict: (B, N, C), outputs_coord: (1, B, N, C), target_query: (1, B, N, C)
-        return template, search, out_dict
+        return recons_loss, template, search, out_dict
 
-    def compute_losses(self, pred_dict, gt_bbox, return_status=True, labels=None):
+    def compute_losses(self, pred_dict, recons_loss, gt_bbox, return_status=True, labels=None):
         # Get boxes
         pred_boxes = pred_dict['pred_boxes']
         if torch.isnan(pred_boxes).any():
@@ -64,7 +64,7 @@ class MixFormerActor(BaseActor):
         l1_loss = self.objective['l1'](pred_boxes_vec, gt_boxes_vec)  # (BN,4) (BN,4)
 
         # weighted sum
-        loss = self.loss_weight['ciou'] * ciou_loss + self.loss_weight['l1'] * l1_loss
+        loss = self.loss_weight['ciou'] * ciou_loss + self.loss_weight['l1'] * l1_loss + 0.1 * recons_loss
 
         # compute cls loss if neccessary
         if 'pred_scores' in pred_dict:
@@ -86,7 +86,8 @@ class MixFormerActor(BaseActor):
                 status = {"Loss/total": loss.item(),
                           "Loss/ciou": ciou_loss.item(),
                           "Loss/l1": l1_loss.item(),
-                          "IoU": mean_iou.item()}
+                          "IoU": mean_iou.item(),
+                          "Loss/recons": recons_loss.item()}
             return loss, status
         else:
             return loss

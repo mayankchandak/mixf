@@ -304,6 +304,11 @@ class TransformerDiscriminator(nn.Module):
         trunc_normal_(self.cls_token, std=.02)
         self.apply(self._init_weights)
         self.grl_img = GradientScalarLayer(-0.1)
+        self.downsample = nn.Sequential(
+            nn.ConvTranspose2d(in_channels=1024, out_channels=512, kernel_size=3, stride=2, padding=1),
+            nn.ConvTranspose2d(in_channels=512, out_channels=256, kernel_size=3, stride=2, padding=1),
+            nn.Upsample(size=(128, 128), mode='bilinear', align_corners=True)
+        )
 
     def _init_weights(self, m):
         if isinstance(m, nn.Linear):
@@ -336,6 +341,7 @@ class TransformerDiscriminator(nn.Module):
         return x[:,0]
 
     def forward(self, x):
+        x = self.downsample(x)
         x = torch.nn.functional.softmax(x, dim=1)
         x = self.grl_img(x)
         x = self.forward_features(x)

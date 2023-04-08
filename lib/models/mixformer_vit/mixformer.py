@@ -291,11 +291,6 @@ class MixFormer(nn.Module):
         self.backbone = backbone
         self.box_head = box_head
         self.head_type = head_type
-        self.newlayer = nn.Sequential(
-            nn.ConvTranspose2d(in_channels=1024, out_channels=512, kernel_size=3, stride=2, padding=1),
-            nn.ConvTranspose2d(in_channels=512, out_channels=256, kernel_size=3, stride=2, padding=1),
-            nn.Upsample(size=(128, 128), mode='bilinear', align_corners=True)
-        )
         self.recons = Reconstructor()
 
     def forward(self, template, online_template, search, run_score_head=False, gt_bboxes=None):
@@ -313,10 +308,15 @@ class MixFormer(nn.Module):
         # after backbone: torch.Size([10, 1024, 12, 12]) torch.Size([10, 1024, 24, 24])
         recons_template = self.recons(template)
         recons_search = self.recons(search)
-        print("after recons:", recons_template.shape, recons_search.shape)
+        # print("after recons:", recons_template.shape, recons_search.shape)
         # after recons: torch.Size([10, 3, 384, 384]) torch.Size([10, 3, 768, 768])
         # Forward the corner head
-        return self.newlayer(template), self.newlayer(search), self.forward_box_head(search)
+        print("template", template)
+        print("search", search)
+        mseloss = torch.nn.MSELoss()
+        recons_loss = mseloss(interp(template/255.), recons_template) + mseloss(search/255., recons_search)
+
+        return template, search, recons_loss, self.forward_box_head(search)
 
     def forward_test(self, search, run_score_head=True, gt_bboxes=None):
         # search: (b, c, h, w)

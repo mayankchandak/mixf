@@ -89,6 +89,7 @@ class LTRTrainer(BaseTrainer):
         for data_iter_step in range(1, dataset_size + 1):
             day_data = next(loader_iter)
             night_data = next(nat_loader_iter)
+            print(day_data['original_template_images'].shape)
             if self.move_data_to_gpu:
                 day_data = day_data.to(self.device)
                 night_data = night_data.to(self.device)

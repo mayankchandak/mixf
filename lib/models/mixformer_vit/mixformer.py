@@ -304,7 +304,7 @@ class MixFormer(nn.Module):
         # print("before backbone:", template.shape, search.shape)
         # before backbone: torch.Size([10, 3, 192, 192]) torch.Size([10, 3, 384, 384])
         original_template, original_search = template, search
-        print(original_search, original_template)
+        # print(original_search, original_template)
         template, online_template, search = self.backbone(template, online_template, search)
         # print("after backbone:", template.shape, search.shape)
         # after backbone: torch.Size([10, 1024, 12, 12]) torch.Size([10, 1024, 24, 24])

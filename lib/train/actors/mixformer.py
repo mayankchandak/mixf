@@ -65,12 +65,12 @@ class MixFormerActor(BaseActor):
 
         # weighted sum
         loss = self.loss_weight['ciou'] * ciou_loss + self.loss_weight['l1'] * l1_loss #+ 0.1 * recons_loss
-        print(loss.shape, recons_loss.shape)
+        # print(loss.shape, recons_loss.shape)
         # compute cls loss if neccessary
         if 'pred_scores' in pred_dict:
             score_loss = self.objective['score'](pred_dict['pred_scores'].view(-1), labels)
             loss = score_loss * self.loss_weight['score']
-        print(loss.shape)
+        # print(loss.shape)
         if return_status:
             # status for log
             mean_iou = iou.detach().mean()

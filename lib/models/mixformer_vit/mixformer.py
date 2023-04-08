@@ -314,7 +314,7 @@ class MixFormer(nn.Module):
         print("template", template)
         print("search", search)
         mseloss = torch.nn.MSELoss()
-        recons_loss = mseloss(interp(template/255.), recons_template) + mseloss(search/255., recons_search)
+        recons_loss = mseloss(template/255., recons_template) + mseloss(search/255., recons_search)
 
         return template, search, recons_loss, self.forward_box_head(search)
 

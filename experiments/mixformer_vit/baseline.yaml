@@ -41,7 +41,7 @@ MODEL:
   VIT_TYPE: base_patch16
   BACKBONE:
     PRETRAINED: True
-    PRETRAINED_PATH: '/YOUR/PRETRAINED/VIT/DIR/mae_pretrain_vit_base.pth'
+    PRETRAINED_PATH: '/workspace/Mayank/mixf/models/mixformer_vit_base_online.pth.tar'
   HEAD_TYPE: CORNER_UP
   HIDDEN_DIM: 768 #768
   PREDICT_MASK: false
@@ -75,3 +75,4 @@ TEST:
     TRACKINGNET: [25]
     VOT20: [10]
     VOT20LT: [200]
+    NAT2021_TEST: [200]

@@ -23,7 +23,7 @@ class MixFormerActor(BaseActor):
             status  -  dict containing detailed losses
         """
         # forward pass
-        recons_loss, template, search, out_dict = self.forward_pass(data, run_score_head=self.run_score_head)
+        template, search, recons_loss, out_dict = self.forward_pass(data, run_score_head=self.run_score_head)
 
         # process the groundtruth
         gt_bboxes = data['search_anno']  # (Ns, batch, 4) (x1,y1,w,h)

@@ -87,7 +87,7 @@ class MixFormerActor(BaseActor):
                           "Loss/ciou": ciou_loss.item(),
                           "Loss/l1": l1_loss.item(),
                           "IoU": mean_iou.item(),
-                          "Loss/recons": recons_loss.item()}
+                          "Loss/recons": recons_loss}
             return loss, status
         else:
             return loss

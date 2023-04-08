@@ -184,6 +184,8 @@ class TrackingSampler(torch.utils.data.Dataset):
                 # make data augmentation
                 
                 data = self.processing(data)
+                for key in data:
+                    print(key)
                 # if dataset.get_name() == 'nat':
                 #     print('nat')
                 # check whether data is valid

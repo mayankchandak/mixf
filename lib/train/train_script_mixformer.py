@@ -52,7 +52,7 @@ def run(settings):
     settings.log_file = os.path.join(log_dir, "%s-%s.log" % (settings.script_name, settings.config_name))
 
     # Build dataloaders
-    loader_train, loader_val, loader_nat = build_dataloaders(cfg, settings)
+    loader_train, loader_val, loader_nat, data_processing_train = build_dataloaders(cfg, settings)
 
     # Create network
     if settings.script_name == "mixformer_vit":
@@ -95,7 +95,7 @@ def run(settings):
     else:
         settings.device = torch.device("cuda:0")
 
-    trainer = LTRTrainer(actor, [loader_train, loader_val], optimizer, settings, model_Disc, optimizer_D, lr_scheduler, accum_iter=accum_iter, use_amp=use_amp, nat_loader=loader_nat)
+    trainer = LTRTrainer(actor, [loader_train, loader_val], optimizer, settings, model_Disc, optimizer_D, lr_scheduler, accum_iter=accum_iter, use_amp=use_amp, nat_loader=loader_nat, data_processing_train=data_processing_train)
 
     # train process
     trainer.train(cfg.TRAIN.EPOCH, load_latest=True, fail_safe=True)

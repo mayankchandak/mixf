@@ -130,7 +130,7 @@ def build_dataloaders(cfg, settings):
                            num_workers=cfg.TRAIN.NUM_WORKER, drop_last=True, stack_dim=1, sampler=val_sampler,
                            epoch_interval=cfg.TRAIN.VAL_EPOCH_INTERVAL)
 
-    return loader_train, loader_val, loader_nat
+    return loader_train, loader_val, loader_nat, data_processing_train
 
 
 def get_optimizer_scheduler(net, cfg):

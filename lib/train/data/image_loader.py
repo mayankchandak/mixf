@@ -52,6 +52,7 @@ def opencv_loader(path):
         print(im.shape)
         im = cv.cvtColor(im, cv.COLOR_BGR2RGB)
         print(im.shape)
+        cv.imwrite("Image.jpg", im)
         return im
     except Exception as e:
         print('ERROR: Could not read image "{}"'.format(path))

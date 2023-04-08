@@ -184,8 +184,8 @@ class TrackingSampler(torch.utils.data.Dataset):
                 # make data augmentation
                 
                 data = self.processing(data)
-                # data['original_template_images'] = template_frames
-                # data['original_search_images'] = search_frames
+                data['original_template_images'] = template_frames
+                data['original_search_images'] = search_frames
                 # for key in data:
                 #     print(key)
                 # print(len(data['template_images']))

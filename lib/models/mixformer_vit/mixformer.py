@@ -303,6 +303,7 @@ class MixFormer(nn.Module):
             search = search.squeeze(0)
         # print("before backbone:", template.shape, search.shape)
         # before backbone: torch.Size([10, 3, 192, 192]) torch.Size([10, 3, 384, 384])
+        original_template, original_search = template, search
         template, online_template, search = self.backbone(template, online_template, search)
         # print("after backbone:", template.shape, search.shape)
         # after backbone: torch.Size([10, 1024, 12, 12]) torch.Size([10, 1024, 24, 24])
@@ -311,12 +312,10 @@ class MixFormer(nn.Module):
         # print("after recons:", recons_template.shape, recons_search.shape)
         # after recons: torch.Size([10, 3, 384, 384]) torch.Size([10, 3, 768, 768])
         # Forward the corner head
-        print("template", template)
-        print("search", search)
         mseloss = torch.nn.MSELoss()
         print(template.shape, recons_template.shape)
         print(search.shape, recons_search.shape)
-        recons_loss = mseloss(template, recons_template) + mseloss(search, recons_search)
+        recons_loss = mseloss(original_template, recons_template) + mseloss(original_search, recons_search)
 
         return template, search, recons_loss, self.forward_box_head(search)
 

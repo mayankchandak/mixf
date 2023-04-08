@@ -92,7 +92,7 @@ class LTRTrainer(BaseTrainer):
             night_data = next(nat_loader_iter)
             print(len(day_data['original_template_images']), len(day_data['original_template_images'][0]), day_data['original_template_images'][0][0].shape)
 
-            # cv2.imwrite("file.jpg", cv2.cvtColor(day_data['original_template_images'][0][0], cv2.COLOR_BGR2RGB))
+            cv2.imwrite("file.jpg", day_data['original_template_images'][0][0])
             if self.move_data_to_gpu:
                 day_data = day_data.to(self.device)
                 night_data = night_data.to(self.device)

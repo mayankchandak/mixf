@@ -40,6 +40,7 @@ def ltr_collate(batch):
             and elem_type.__name__ != 'string_':
         elem = batch[0]
         if elem_type.__name__ == 'ndarray':
+            print("reached here")
             # array of string classes and object
             if torch.utils.data.dataloader.re.search('[SaUO]', elem.dtype.str) is not None:
                 raise TypeError(error_msg.format(elem.dtype))

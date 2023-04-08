@@ -45,7 +45,7 @@ def ltr_collate(batch):
             # if torch.utils.data.dataloader.re.search('[SaUO]', elem.dtype.str) is not None:
                 # raise TypeError(error_msg.format(elem.dtype))
 
-            return torch.stack([torch.from_numpy(b) for b in batch], 0)
+            return [torch.from_numpy(b) for b in batch]
         if elem.shape == ():  # scalars
             py_type = float if elem.dtype.name.startswith('float') else int
             return torch.utils.data.dataloader.numpy_type_map[elem.dtype.name](list(map(py_type, batch)))
@@ -97,7 +97,7 @@ def ltr_collate_stack1(batch):
             # if torch.utils.data.dataloader.re.search('[SaUO]', elem.dtype.str) is not None:
             #     raise TypeError(error_msg.format(elem.dtype))
 
-            return torch.stack([torch.from_numpy(b) for b in batch], 1)
+            return [torch.from_numpy(b) for b in batch]
         if elem.shape == ():  # scalars
             py_type = float if elem.dtype.name.startswith('float') else int
             return torch.utils.data.dataloader.numpy_type_map[elem.dtype.name](list(map(py_type, batch)))

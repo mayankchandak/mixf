@@ -6,6 +6,7 @@ from lib.train.admin import TensorboardWriter
 import torch
 import time
 import math
+import cv2
 from torch.utils.data.distributed import DistributedSampler
 from torch.nn.utils import clip_grad_norm_
 from torch.cuda.amp import autocast
@@ -90,6 +91,7 @@ class LTRTrainer(BaseTrainer):
             day_data = next(loader_iter)
             night_data = next(nat_loader_iter)
             print(len(day_data['original_template_images']))
+            cv2.imwrite("file.jpg", day_data['original_template_images'][0])
             if self.move_data_to_gpu:
                 day_data = day_data.to(self.device)
                 night_data = night_data.to(self.device)

@@ -313,8 +313,6 @@ class MixFormer(nn.Module):
         # after recons: torch.Size([10, 3, 384, 384]) torch.Size([10, 3, 768, 768])
         # Forward the corner head
         mseloss = torch.nn.MSELoss()
-        print(template.shape, recons_template.shape)
-        print(search.shape, recons_search.shape)
         recons_loss = mseloss(original_template, recons_template) + mseloss(original_search, recons_search)
 
         return template, search, recons_loss, self.forward_box_head(search)

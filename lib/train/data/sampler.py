@@ -169,14 +169,14 @@ class TrackingSampler(torch.utils.data.Dataset):
                 day_search_frames, day_search_anno, _ = dataset.get_frames(seq_id, search_frame_ids, seq_info_dict)
 
                 H, W, _ = day_template_frames[0].shape
-                # print("reached here")
+                print("reached here")
                 try:
                     style_template_frames = copy.deepcopy(day_template_frames)
                     style_search_frames = copy.deepcopy(day_search_frames)
                     style_template_anno = copy.deepcopy(day_template_anno)
                     style_search_anno = copy.deepcopy(day_search_anno)
                 except Exception as e: print(e)
-                # print("reached here also ")
+                print("reached here also ")
                 if day_template_frames == style_template_frames and day_search_frames == style_search_frames and day_template_anno == style_template_anno and day_search_anno == style_search_anno:
                     print("Okay")
                 else:

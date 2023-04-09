@@ -14,6 +14,7 @@ from lib.utils.box_ops import box_xyxy_to_cxcywh, box_cxcywh_to_xyxy
 from lib.models.mixformer_vit.pos_utils import get_2d_sincos_pos_embed
 from lib.models.reconstructor import Reconstructor
 
+mseloss = torch.nn.MSELoss()
 
 class PatchEmbed(nn.Module):
     """ 2D Image to Patch Embedding
@@ -284,14 +285,14 @@ def get_mixformer_vit(config, train):
 
 
 class MixFormer(nn.Module):
-    def __init__(self, backbone, box_head, head_type="CORNER"):
+    def __init__(self, backbone, box_head, reconstructor, head_type="CORNER"):
         """ Initializes the model.
         """
         super().__init__()
         self.backbone = backbone
         self.box_head = box_head
         self.head_type = head_type
-        # self.recons = Reconstructor()
+        self.recons = reconstructor
 
     def forward(self, template, online_template, search, run_score_head=False, gt_bboxes=None):
         # search: (b, c, h, w)
@@ -308,13 +309,13 @@ class MixFormer(nn.Module):
         template, online_template, search = self.backbone(template, online_template, search)
         # print("after backbone:", template.shape, search.shape)
         # after backbone: torch.Size([10, 1024, 12, 12]) torch.Size([10, 1024, 24, 24])
-        # recons_template = self.recons(template)
-        # recons_search = self.recons(search)
+        recons_template = self.recons(template)
+        recons_search = self.recons(search)
         # print("after recons:", recons_template.shape, recons_search.shape)
         # after recons: torch.Size([10, 3, 384, 384]) torch.Size([10, 3, 768, 768])
         # Forward the corner head
-        mseloss = torch.nn.MSELoss()
-        # recons_loss = mseloss(original_template, recons_template) + mseloss(original_search, recons_search)
+        
+        recons_loss = mseloss(original_template, recons_template) + mseloss(original_search, recons_search)
         recons_loss = 0
         return template, search, recons_loss, self.forward_box_head(search)
 
@@ -354,10 +355,12 @@ def build_mixformer_vit(cfg, train=True) -> MixFormer:
     backbone = get_mixformer_vit(cfg, train)  # backbone without positional encoding and attention mask
     # print("reached here in mixformer_vit 11")
     box_head = build_box_head(cfg)  # a simple corner head
+    reconstructor = Reconstructor()
     # print("reached here in mixformer_vit 12")
     model = MixFormer(
         backbone,
         box_head,
+        reconstructor=reconstructor,
         head_type=cfg.MODEL.HEAD_TYPE
     )
 

@@ -184,8 +184,8 @@ class TrackingSampler(torch.utils.data.Dataset):
                                    'search_anno': day_search_anno['bbox']
                                 })
                 # make data augmentation
-                print("Day data", day_data)
                 day_data = self.processing(day_data)
+                print("Day data", day_data)
                 valid = day_data['valid']
                 
             except:
@@ -248,8 +248,8 @@ class TrackingSampler(torch.utils.data.Dataset):
                                 'search_images': style_search_frames,
                                 'search_anno': style_search_anno['bbox']
                             })
-        print("style data", style_data)
         style_data = self.processing(style_data)
+        print("style data", style_data)
 
         data = TensorDict({
             'day_template_images': day_data['template_images'],

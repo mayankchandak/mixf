@@ -139,7 +139,7 @@ class LTRTrainer(BaseTrainer):
                 with autocast():
                     day_template_out, day_search_out, loss, stats = self.actor(day_data)
             stats['Loss/style'] = style_loss.item()
-            loss = (0.2 * style_loss + loss) / 1.2
+            loss = (0.2 * style_loss + loss)
             loss /= self.accum_iter
             # backward pass and update weights
             if loader.training:

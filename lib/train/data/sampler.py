@@ -15,7 +15,7 @@ def calc_mean_std(feat, eps=1e-5):
     return feat_mean, feat_std
 
 def wallis(content, style, alpha=1.0):
-    assert (content.size() == style.size())
+    # assert (content.size() == style.size())
     style_mean, style_std = calc_mean_std(style)
     content_mean, content_std = calc_mean_std(content)
     normalized_feat = (content - content_mean.expand_as(content)) / content_std.expand_as(content)

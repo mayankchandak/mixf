@@ -175,12 +175,14 @@ class TrackingSampler(torch.utils.data.Dataset):
                     style_search_frames = copy.deepcopy(day_search_frames)
                     style_template_anno = copy.deepcopy(day_template_anno)
                     style_search_anno = copy.deepcopy(day_search_anno)
+
+                    print("reached here also ")
+                    if (day_template_frames == style_template_frames) and (day_search_frames == style_search_frames) and (day_template_anno == style_template_anno) and (day_search_anno == style_search_anno):
+                        print("Okay")
+                    else:
+                        print("Not okay | unequal")
                 except Exception as e: print(e)
-                print("reached here also ")
-                if (day_template_frames == style_template_frames) and (day_search_frames == style_search_frames) and (day_template_anno == style_template_anno) and (day_search_anno == style_search_anno):
-                    print("Okay")
-                else:
-                    print("Not okay | unequal")
+                
 
                 day_data = TensorDict({'template_images': day_template_frames,
                                    'template_anno': day_template_anno['bbox'],

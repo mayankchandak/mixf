@@ -154,9 +154,7 @@ class TrackingSampler(torch.utils.data.Dataset):
                 else:
                     raise ValueError("Illegal frame sample mode")
             else:
-                # In case of image dataset, just repeat the image to generate synthetic video
-                template_frame_ids = [1] * self.num_template_frames
-                search_frame_ids = [1] * self.num_search_frames
+                raise ValueError("Only video dataset supported")
             try:
                 template_frames, template_anno, _ = dataset.get_frames(seq_id, template_frame_ids, seq_info_dict)
                 search_frames, search_anno, _ = dataset.get_frames(seq_id, search_frame_ids, seq_info_dict)

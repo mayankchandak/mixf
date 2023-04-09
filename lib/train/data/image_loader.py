@@ -44,7 +44,7 @@ def jpeg4py_loader(path):
 
 def opencv_loader(path):
     """ Read image using opencv's imread function and returns it in rgb format"""
-    print("using opencv_loader")
+    # print("using opencv_loader")
     try:
         im = cv.imread(path, cv.IMREAD_COLOR)
 

@@ -303,44 +303,6 @@ class MixformerProcessing(BaseProcessing):
         else:
             data = data.apply(lambda x: x[0] if isinstance(x, list) else x)
 
-        # if self.train_score:
-        #     if random.random() < 0.5:
-        #         data['label'] = torch.zeros_like(data['label'])
-        #         data['search_anno'] = self._generate_neg_proposals(data['search_anno'])
-
-        # search_anno is with normalized coords. (x,y,w,h)
-        # search_anno = data['search_anno'].clone()
-        # wl = wr = search_anno[:, 2] * 0.5
-        # ht = hb = search_anno[:, 3] * 0.5
-        # w2h2 = torch.stack((wl, wr, ht, hb), dim=1)  # [num_images, 4]
-        #
-        # search_anno = (search_anno * self.out_feat_sz).float()
-        # center_float = search_anno[:, :2] + search_anno[:, 2:] / 2.
-        # center_int = center_float.int().float()
-        # ind = center_int[:, 1] * self.out_feat_sz + center_int[:, 0]  # [num_images, 1]
-        #
-        # data['ind'] = ind.long()
-        # data['w2h2'] = w2h2
-
-        ### Generate label functions and regression mask
-        # if self.settings.script_name == 'tsp_cls_online':
-        #     search_anno = data['search_anno'].clone() * self.output_sz['search']
-        #     data['gt_scores'] = self._generate_label_function(search_anno)
-
-            # search_anno = data['search_anno'].clone() * self.out_feat_sz
-            # target_center = search_anno[:, :2] + search_anno[:, 2:] * 0.5
-            # # add noise
-            # target_center[:, 0] = target_center[:, 0] + np.random.randint(0, 2)
-            # target_center[:, 1] = target_center[:, 1] + np.random.randint(0, 2)
-            # mask_scale_w = self.settings.mask_scale + np.random.uniform(-0.15, 0.15)
-            # mask_scale_h = self.settings.mask_scale + np.random.uniform(-0.15, 0.15)
-            # mask_w, mask_h = search_anno[:, 2] * mask_scale_w, search_anno[:, 3] * mask_scale_h
-            #
-            # data['reg_mask'] = self._generate_regression_mask(target_center, mask_w, mask_h, self.out_feat_sz)
-
-        for key in ['template_anno','template_masks','search_masks','dataset','test_class','template_att','search_att']:
-            del data[key]
-
         return data
 
     def _generate_regression_mask(self, target_center, mask_w, mask_h, mask_size=20):

@@ -291,7 +291,7 @@ class MixFormer(nn.Module):
         self.backbone = backbone
         self.box_head = box_head
         self.head_type = head_type
-        self.recons = Reconstructor()
+        # self.recons = Reconstructor()
 
     def forward(self, template, online_template, search, run_score_head=False, gt_bboxes=None):
         # search: (b, c, h, w)
@@ -308,14 +308,14 @@ class MixFormer(nn.Module):
         template, online_template, search = self.backbone(template, online_template, search)
         # print("after backbone:", template.shape, search.shape)
         # after backbone: torch.Size([10, 1024, 12, 12]) torch.Size([10, 1024, 24, 24])
-        recons_template = self.recons(template)
-        recons_search = self.recons(search)
+        # recons_template = self.recons(template)
+        # recons_search = self.recons(search)
         # print("after recons:", recons_template.shape, recons_search.shape)
         # after recons: torch.Size([10, 3, 384, 384]) torch.Size([10, 3, 768, 768])
         # Forward the corner head
         mseloss = torch.nn.MSELoss()
-        recons_loss = mseloss(original_template, recons_template) + mseloss(original_search, recons_search)
-        
+        # recons_loss = mseloss(original_template, recons_template) + mseloss(original_search, recons_search)
+        recons_loss = 0
         return template, search, recons_loss, self.forward_box_head(search)
 
     def forward_test(self, search, run_score_head=True, gt_bboxes=None):

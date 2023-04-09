@@ -20,7 +20,7 @@ def weightedMSE(D_out, label):
 
 class LTRTrainer(BaseTrainer):
     def __init__(self, actor, loaders, optimizer, settings, Disc, optimizer_D, lr_scheduler=None, accum_iter=1,
-                 use_amp=False, shed_args=None, nat_loader=None, data_processing_train=None):
+                 use_amp=False, shed_args=None, nat_loader=None):
         """
         args:
             actor - The actor for training the network
@@ -51,7 +51,6 @@ class LTRTrainer(BaseTrainer):
         # self.nat_loader = nat_loader
         self.optimizer_D = optimizer_D
         self.Disc = Disc
-        self.data_processing_train = data_processing_train
         if not self.data_processing_train:
             print("Warning: data_processing_train not found!")
         if use_amp:

@@ -96,7 +96,7 @@ def run(settings):
     else:
         settings.device = torch.device("cuda:0")
 
-    trainer = LTRTrainer(actor, [loader_train], optimizer, settings, model_Disc, optimizer_D, lr_scheduler, accum_iter=accum_iter, use_amp=use_amp, data_processing_train=data_processing_train)
+    trainer = LTRTrainer(actor, [loader_train], optimizer, settings, model_Disc, optimizer_D, lr_scheduler, accum_iter=accum_iter, use_amp=use_amp)
 
     # train process
     trainer.train(cfg.TRAIN.EPOCH, load_latest=True, fail_safe=True)

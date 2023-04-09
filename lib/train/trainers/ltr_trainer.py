@@ -174,62 +174,6 @@ class LTRTrainer(BaseTrainer):
             # print("Debug |", counter)
         # print("End |", counter)
 
-    def cycle_dataset(self, loader):
-        """Do a cycle of training or validation."""
-
-        self.actor.train(loader.training)
-        torch.set_grad_enabled(loader.training)
-
-        self._init_timing()
-
-        self.optimizer.zero_grad()
-        counter = 0
-        loader_iter = iter(loader)
-        for data_iter_step, data in enumerate(loader, 1):
-        # for data_iter_step in range(1, len(loader) + 1):
-            # counter+=1
-            # data = next(loader_iter)
-            # get inputs
-            if self.move_data_to_gpu:
-                data = data.to(self.device)
-
-            data['epoch'] = self.epoch
-            data['settings'] = self.settings
-            # forward pass
-            if not self.use_amp:
-                loss, stats = self.actor(data)
-            else:
-                with autocast():
-                    loss, stats = self.actor(data)
-
-            loss /= self.accum_iter
-            # backward pass and update weights
-            if loader.training:
-                # self.optimizer.zero_grad()
-                if not self.use_amp:
-                    loss.backward()
-                    if (data_iter_step + 1) % self.accum_iter == 0:
-                        if self.settings.grad_clip_norm > 0:
-                            torch.nn.utils.clip_grad_norm_(self.actor.net.parameters(), self.settings.grad_clip_norm)
-                        self.optimizer.step()
-                else:
-                    self.loss_scaler(loss, self.optimizer, parameters=self.actor.net.parameters(),
-                                     clip_grad=self.settings.grad_clip_norm,
-                                     update_grad=(data_iter_step + 1) % self.accum_iter == 0)
-
-            if (data_iter_step + 1) % self.accum_iter == 0:
-                self.optimizer.zero_grad()
-            torch.cuda.synchronize()
-
-            # update statistics
-            batch_size = data['template_images'].shape[loader.stack_dim]
-            self._update_stats(stats, batch_size, loader)
-
-            # print statistics
-            self._print_stats(data_iter_step, loader, batch_size)
-            # print("Debug |", counter)
-        # print("End |", counter)
-
     def train_epoch(self):
         """Do one epoch for each loader."""
         for loader in self.loaders:

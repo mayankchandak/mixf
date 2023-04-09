@@ -128,7 +128,7 @@ def jittered_center_crop(frames, box_extract, box_gt, search_area_factor, output
     if masks is None:
         crops_resize_factors = [sample_target(f, a, search_area_factor, output_sz)
                                 for f, a in zip(frames, box_extract)]
-        frames_crop, resize_factors, att_mask = zip(*crops_resize_factors)
+        frames_crop, resize_factors, _ = zip(*crops_resize_factors)
         masks_crop = None
     else:
         crops_resize_factors = [sample_target(f, a, search_area_factor, output_sz, m)
@@ -142,7 +142,7 @@ def jittered_center_crop(frames, box_extract, box_gt, search_area_factor, output
     box_crop = [transform_image_to_crop(a_gt, a_ex, rf, crop_sz, normalize=True)
                 for a_gt, a_ex, rf in zip(box_gt, box_extract, resize_factors)]  # (x1,y1,w,h) list of tensors
 
-    return frames_crop, box_crop, att_mask, masks_crop
+    return frames_crop, box_crop
 
 
 def transform_box_to_crop(box: torch.Tensor, crop_box: torch.Tensor, crop_sz: torch.Tensor, normalize=False) -> torch.Tensor:

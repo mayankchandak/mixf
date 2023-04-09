@@ -126,10 +126,10 @@ class MixformerProcessing(BaseProcessing):
         """
         # Apply joint transforms
         if self.transform['joint'] is not None:
-            data['template_images'], data['template_anno'], data['template_masks'] = self.transform['joint'](
-                image=data['template_images'], bbox=data['template_anno'], mask=data['template_masks'])
-            data['search_images'], data['search_anno'], data['search_masks'] = self.transform['joint'](
-                image=data['search_images'], bbox=data['search_anno'], mask=data['search_masks'], new_roll=False)
+            data['template_images'], data['template_anno'] = self.transform['joint'](
+                image=data['template_images'], bbox=data['template_anno'])
+            data['search_images'], data['search_anno'] = self.transform['joint'](
+                image=data['search_images'], bbox=data['search_anno'], new_roll=False)
 
         for s in ['template', 'search']:
             assert self.mode == 'sequence' or len(data[s + '_images']) == 1, \
@@ -148,36 +148,36 @@ class MixformerProcessing(BaseProcessing):
                 return data
 
             # Crop image region centered at jittered_anno box and get the attention mask
-            crops, boxes, att_mask, mask_crops = prutils.jittered_center_crop(data[s + '_images'], jittered_anno,
+            crops, boxes = prutils.jittered_center_crop(data[s + '_images'], jittered_anno,
                                                                               data[s + '_anno'], self.search_area_factor[s],
-                                                                              self.output_sz[s], masks=data[s + '_masks'])
+                                                                              self.output_sz[s])
             # Apply transforms
-            data[s + '_images'], data[s + '_anno'], data[s + '_att'], data[s + '_masks'] = self.transform[s](
-                image=crops, bbox=boxes, att=att_mask, mask=mask_crops, joint=False)
+            data[s + '_images'], data[s + '_anno'] = self.transform[s](
+                image=crops, bbox=boxess, joint=False)
 
             # 2021.1.9 Check whether elements in data[s + '_att'] is all 1
             # Note that type of data[s + '_att'] is tuple, type of ele is torch.tensor
-            for ele in data[s + '_att']:
-                if (ele == 1).all():
-                    data['valid'] = False
-                    # print("Values of original attention mask are all one. Replace it with new data.")
-                    return data
+            # for ele in data[s + '_att']:
+            #     if (ele == 1).all():
+            #         data['valid'] = False
+            #         # print("Values of original attention mask are all one. Replace it with new data.")
+            #         return data
             # 2021.1.10 more strict conditions: require the donwsampled masks not to be all 1
-            for ele in data[s + '_att']:
-                feat_size = self.output_sz[s] // 16  # 16 is the backbone stride
-                # (1,1,128,128) (1,1,256,256) --> (1,1,8,8) (1,1,16,16)
-                mask_down = F.interpolate(ele[None, None].float(), size=feat_size).to(torch.bool)[0]
-                if (mask_down == 1).all():
-                    data['valid'] = False
-                    # print("Values of down-sampled attention mask are all one. "
-                    #       "Replace it with new data.")
-                    return data
+            # for ele in data[s + '_att']:
+            #     feat_size = self.output_sz[s] // 16  # 16 is the backbone stride
+            #     # (1,1,128,128) (1,1,256,256) --> (1,1,8,8) (1,1,16,16)
+            #     mask_down = F.interpolate(ele[None, None].float(), size=feat_size).to(torch.bool)[0]
+            #     if (mask_down == 1).all():
+            #         data['valid'] = False
+            #         # print("Values of down-sampled attention mask are all one. "
+            #         #       "Replace it with new data.")
+            #         return data
 
         data['valid'] = True
         # if we use copy-and-paste augmentation
-        if data["template_masks"] is None or data["search_masks"] is None:
-            data["template_masks"] = torch.zeros((1, self.output_sz["template"], self.output_sz["template"]))
-            data["search_masks"] = torch.zeros((1, self.output_sz["search"], self.output_sz["search"]))
+        # if data["template_masks"] is None or data["search_masks"] is None:
+        #     data["template_masks"] = torch.zeros((1, self.output_sz["template"], self.output_sz["template"]))
+        #     data["search_masks"] = torch.zeros((1, self.output_sz["search"], self.output_sz["search"]))
         # Prepare output
         if self.mode == 'sequence':
             data = data.apply(stack_tensors)

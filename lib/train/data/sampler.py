@@ -176,7 +176,7 @@ class TrackingSampler(torch.utils.data.Dataset):
                                    'search_anno': day_search_anno['bbox']
                                 })
                 # make data augmentation
-                print("DayBefore: ", day_template_frames[0][0][0], day_template_anno['bbox'], day_search_anno['bbox'])
+                print("DayBefore: ", day_template_frames[0][0][0], day_data['template_anno'], day_data['search_anno'])
                 day_data = self.processing(day_data)
                 print("DayAfter: ", day_data['template_images'][0][0][0], day_data['template_anno'], day_data['search_anno'])
                 valid = day_data['valid']
@@ -241,7 +241,7 @@ class TrackingSampler(torch.utils.data.Dataset):
                                 'search_images': style_search_frames,
                                 'search_anno': day_search_anno['bbox']
                             })
-        print("StyleBefore: ", style_template_frames[0][0][0], day_template_anno['bbox'], day_search_anno['bbox'])
+        print("StyleBefore: ", style_template_frames[0][0][0], style_data['template_anno'], style_data['search_anno'])
         style_data = self.processing(style_data)
         print("StyleAfter: ", style_data['template_images'][0][0][0], style_data['template_anno'], style_data['search_anno'])
 

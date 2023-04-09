@@ -99,6 +99,11 @@ class LTRTrainer(BaseTrainer):
                                    'search_images': data['night_search_images'],
                                    'search_anno': data['night_search_anno']
                                 })
+            style_data = TensorDict({'template_images': data['style_template_images'],
+                                   'template_anno': data['day_template_anno'],
+                                   'search_images': data['style_search_images'],
+                                   'search_anno': data['day_search_anno']
+                                })
             # night_data = next(nat_loader_iter)
 
             # cv2.imwrite("file.jpg", day_data['original_template_images'][0][0])
@@ -110,6 +115,8 @@ class LTRTrainer(BaseTrainer):
             
             night_data['epoch'] = self.epoch
             night_data['settings'] = self.settings
+
+            _, _, style_loss, _ = self.actor(style_data)
             
             night_template_out, night_search_out, _, _ = self.actor(night_data)
 
@@ -128,7 +135,8 @@ class LTRTrainer(BaseTrainer):
             else:
                 with autocast():
                     day_template_out, day_search_out, loss, stats = self.actor(day_data)
-
+            stats['Loss/style'] = style_loss.item()
+            loss +=  0.01 * style_loss
             loss /= self.accum_iter
             # backward pass and update weights
             if loader.training:

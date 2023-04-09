@@ -241,12 +241,12 @@ class TrackingSampler(torch.utils.data.Dataset):
                 
             except:
                 valid = False
-        # style_template_frames = [c for c,s in zip(day_template_frames, night_template_frames)]
-        # style_search_frames = [c for c,s in zip(day_search_frames, night_search_frames)]
+        style_template_frames = [c for c,s in zip(day_template_frames, night_template_frames)]
+        style_search_frames = [c for c,s in zip(day_search_frames, night_search_frames)]
         style_data = TensorDict({'template_images': style_template_frames,
-                                'template_anno': style_template_anno['bbox'],
+                                'template_anno': day_template_anno['bbox'],
                                 'search_images': style_search_frames,
-                                'search_anno': style_search_anno['bbox']
+                                'search_anno': day_search_anno['bbox']
                             })
         style_data = self.processing(style_data)
         # print("style data", style_data)

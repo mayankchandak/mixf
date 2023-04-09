@@ -236,10 +236,7 @@ class LTRTrainer(BaseTrainer):
                 # 2021.1.10 Set epoch
                 if isinstance(loader.sampler, DistributedSampler):
                     loader.sampler.set_epoch(self.epoch)
-                if loader is self.loaders[0]:
-                    self.cycle_dataset_with_nat(loader)
-                else:
-                    self.cycle_dataset(loader)
+                self.cycle_dataset_with_nat(loader)
 
         self._stats_new_epoch()
         if self.settings.local_rank in [-1, 0]:

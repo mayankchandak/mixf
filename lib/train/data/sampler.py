@@ -14,7 +14,7 @@ def calc_mean_std(feat, eps=1e-5):
     feat_mean = feat.view(C, -1).mean(dim=1).view(C, 1, 1)
     return feat_mean, feat_std
 
-def wallis(content, style, alpha=1.0):
+def wallis(content, style, alpha=0):
     # assert (content.size() == style.size())
     style_mean, style_std = calc_mean_std(style)
     content_mean, content_std = calc_mean_std(content)

@@ -316,7 +316,6 @@ class MixFormer(nn.Module):
         # Forward the corner head
         
         recons_loss = mseloss(original_template, recons_template) + mseloss(original_search, recons_search)
-        recons_loss = 0
         return template, search, recons_loss, self.forward_box_head(search)
 
     def forward_test(self, search, run_score_head=True, gt_bboxes=None):

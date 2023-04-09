@@ -51,8 +51,7 @@ class LTRTrainer(BaseTrainer):
         # self.nat_loader = nat_loader
         self.optimizer_D = optimizer_D
         self.Disc = Disc
-        if not self.data_processing_train:
-            print("Warning: data_processing_train not found!")
+
         if use_amp:
             print("Using amp")
             self.loss_scaler = NativeScaler()

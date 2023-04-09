@@ -340,7 +340,8 @@ class MixformerProcessing(BaseProcessing):
         data = {
             'template_images':data['template_images'],
             'search_images':data['search_images'],
-            'search_anno':data['search_anno']
+            'search_anno':data['search_anno'],
+            'valid':data['valid']
         }
         return data
 

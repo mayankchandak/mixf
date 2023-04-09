@@ -128,7 +128,8 @@ class LTRTrainer(BaseTrainer):
             Dzn = self.Disc(night_template_out)
             Dxn = self.Disc(night_search_out)
             D_source_label = torch.FloatTensor(Dzn.data.size()).fill_(source_label)
-            loss_adv = 0.1 * (weightedMSE(Dzn, D_source_label) +  weightedMSE(Dxn, D_source_label))
+            loss_adv = 0.01 * (weightedMSE(Dzn, D_source_label) +  weightedMSE(Dxn, D_source_label))
+            loss_adv_stat = loss_adv.item()
             if is_valid_number(loss_adv.data.item()):
                 loss_adv.backward()
 
@@ -139,6 +140,7 @@ class LTRTrainer(BaseTrainer):
                 with autocast():
                     day_template_out, day_search_out, loss, stats = self.actor(day_data)
             stats['Loss/style'] = style_loss.item()
+            stats['Loss/adv'] = loss_adv_stat
             loss = (0.2 * style_loss + loss)
             loss /= self.accum_iter
             # backward pass and update weights
@@ -168,7 +170,7 @@ class LTRTrainer(BaseTrainer):
             loss_d = 0.1 * (weightedMSE(Dn1, Dt) + weightedMSE(Dn2, Dt) + weightedMSE(Dd1, Ds) + weightedMSE(Dd2, Ds))
             if is_valid_number(loss_d.data.item()):
                 loss_d.backward() 
-
+            stats['Loss/Disc'] = loss_d.item()
             clip_grad_norm_(self.Disc.parameters(), 0.1)
             self.optimizer_D.step()
             self.optimizer_D.zero_grad()

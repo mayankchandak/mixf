@@ -169,18 +169,12 @@ class TrackingSampler(torch.utils.data.Dataset):
                 day_search_frames, day_search_anno, _ = dataset.get_frames(seq_id, search_frame_ids, seq_info_dict)
 
                 H, W, _ = day_template_frames[0].shape
-                print("reached here")
+
                 try:
                     style_template_frames = copy.deepcopy(day_template_frames)
                     style_search_frames = copy.deepcopy(day_search_frames)
                     style_template_anno = copy.deepcopy(day_template_anno)
                     style_search_anno = copy.deepcopy(day_search_anno)
-
-                    print("reached here also ")
-                    if (day_template_frames[0] == style_template_frames[0]).all() and (day_search_frames == style_search_frames).all() and (day_template_anno == style_template_anno).all() and (day_search_anno == style_search_anno).all():
-                        print("Okay")
-                    else:
-                        print("Not okay | unequal")
                 except Exception as e: print(e)
                 
 
@@ -190,9 +184,8 @@ class TrackingSampler(torch.utils.data.Dataset):
                                    'search_anno': day_search_anno['bbox']
                                 })
                 # make data augmentation
-                # print("DayBefore: ", day_template_frames[0][0][0], day_data['template_anno'], day_data['search_anno'])
+                print("Day data", day_data)
                 day_data = self.processing(day_data)
-                # print("DayAfter: ", day_data['template_images'][0][0][0], day_data['template_anno'], day_data['search_anno'])
                 valid = day_data['valid']
                 
             except:
@@ -255,10 +248,8 @@ class TrackingSampler(torch.utils.data.Dataset):
                                 'search_images': style_search_frames,
                                 'search_anno': style_search_anno['bbox']
                             })
-    
-        # print("StyleBefore: ", style_template_frames[0][0][0], style_data['template_anno'], style_data['search_anno'])
+        print("style data", style_data)
         style_data = self.processing(style_data)
-        # print("StyleAfter: ", style_data['template_images'][0][0][0], style_data['template_anno'], style_data['search_anno'])
 
         data = TensorDict({
             'day_template_images': day_data['template_images'],

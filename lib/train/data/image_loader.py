@@ -51,6 +51,7 @@ def opencv_loader(path):
         # convert to rgb and return
         # print(im.shape)
         im = cv.cvtColor(im, cv.COLOR_BGR2RGB)
+        im = cv.cvtColor(im, cv.COLOR_BGR2RGB)
         # print(im.shape, type(im))
         cv.imwrite("Image.jpg", im)
         return im

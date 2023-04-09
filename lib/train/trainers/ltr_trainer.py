@@ -11,6 +11,7 @@ from torch.utils.data.distributed import DistributedSampler
 from torch.nn.utils import clip_grad_norm_
 from torch.cuda.amp import autocast
 from lib.train.trainers.misc import NativeScalerWithGradNormCount as NativeScaler
+from lib.utils import TensorDict
 
 def is_valid_number(x):
         return not(math.isnan(x) or math.isinf(x) or x > 1e4)

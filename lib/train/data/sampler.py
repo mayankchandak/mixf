@@ -44,7 +44,7 @@ class TrackingSampler(torch.utils.data.Dataset):
         if p_day_datasets is None:
             p_day_datasets = [len(d) for d in self.day_datasets]
         if p_night_datasets is None:
-            p_nightdatasets = [len(d) for d in self.night_datasets]
+            p_night_datasets = [len(d) for d in self.night_datasets]
         # Normalize
         p_total = sum(p_day_datasets)
         self.p_day_datasets = [x / p_total for x in p_day_datasets]

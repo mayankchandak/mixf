@@ -235,17 +235,7 @@ class TrackingSampler(torch.utils.data.Dataset):
                 valid = False
         style_template_frames = [wallis_cv2(c,s) for c,s in zip(day_template_frames, night_template_frames)]
         style_search_frames = [wallis_cv2(c,s) for c,s in zip(day_search_frames, night_search_frames)]
-        print("start writing images")
-        cv2.imwrite("day_template_0.jpg", day_template_frames[0])
-        cv2.imwrite("day_template_1.jpg", day_template_frames[1])
-        cv2.imwrite("day_search.jpg", day_search_frames[0])
-        cv2.imwrite("night_template_0.jpg", night_template_frames[0])
-        cv2.imwrite("night_template_1.jpg", night_template_frames[1])
-        cv2.imwrite("night_search.jpg", night_search_frames[0])
-        cv2.imwrite("style_template_0.jpg", style_template_frames[0])
-        cv2.imwrite("style_template_1.jpg", style_template_frames[1])
-        cv2.imwrite("style_search.jpg", style_search_frames[0])
-        print("end writing images")
+        
         data = TensorDict({
             'day_template_images': day_data['template_images'],
             'day_template_anno': day_data['template_anno'],

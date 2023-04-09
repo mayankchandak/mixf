@@ -137,15 +137,15 @@ class TrackingSampler(torch.utils.data.Dataset):
             else:
                 raise ValueError("Only video dataset supported")
             try:
-                template_frames, template_anno, _ = dataset.get_frames(seq_id, template_frame_ids, seq_info_dict)
-                search_frames, search_anno, _ = dataset.get_frames(seq_id, search_frame_ids, seq_info_dict)
+                day_template_frames, day_template_anno, _ = dataset.get_frames(seq_id, template_frame_ids, seq_info_dict)
+                day_search_frames, day_search_anno, _ = dataset.get_frames(seq_id, search_frame_ids, seq_info_dict)
 
-                H, W, _ = template_frames[0].shape
+                H, W, _ = day_template_frames[0].shape
  
-                day_data = TensorDict({'template_images': template_frames,
-                                   'template_anno': template_anno['bbox'],
-                                   'search_images': search_frames,
-                                   'search_anno': search_anno['bbox']
+                day_data = TensorDict({'template_images': day_template_frames,
+                                   'template_anno': day_template_anno['bbox'],
+                                   'search_images': day_search_frames,
+                                   'search_anno': day_search_anno['bbox']
                                 })
                 # make data augmentation
                 
@@ -188,14 +188,14 @@ class TrackingSampler(torch.utils.data.Dataset):
             else:
                 raise ValueError("Only video dataset supported")
             try:
-                template_frames, template_anno, _ = dataset.get_frames(seq_id, template_frame_ids, seq_info_dict)
-                search_frames, search_anno, _ = dataset.get_frames(seq_id, search_frame_ids, seq_info_dict)
+                night_template_frames, template_anno, _ = dataset.get_frames(seq_id, template_frame_ids, seq_info_dict)
+                night_search_frames, search_anno, _ = dataset.get_frames(seq_id, search_frame_ids, seq_info_dict)
 
-                H, W, _ = template_frames[0].shape
+                H, W, _ = night_template_frames[0].shape
  
-                night_data = TensorDict({'template_images': template_frames,
+                night_data = TensorDict({'template_images': night_template_frames,
                                    'template_anno': template_anno['bbox'],
-                                   'search_images': search_frames,
+                                   'search_images': night_search_frames,
                                    'search_anno': search_anno['bbox']
                                 })
                 # make data augmentation
@@ -205,6 +205,14 @@ class TrackingSampler(torch.utils.data.Dataset):
                 
             except:
                 valid = False
+        print("start writing images")
+        cv2.imwrite("day_template_0.jpg", day_template_frames[0])
+        cv2.imwrite("day_template_1.jpg", day_template_frames[1])
+        cv2.imwrite("day_search.jpg", day_search_frames[0])
+        cv2.imwrite("night_template_0.jpg", night_template_frames[0])
+        cv2.imwrite("night_template_1.jpg", night_template_frames[1])
+        cv2.imwrite("night_search.jpg", night_search_frames[0])
+        print("end writing images")
         data = TensorDict({
             'day_template_images': day_data['template_images'],
             'day_template_anno': day_data['template_anno'],

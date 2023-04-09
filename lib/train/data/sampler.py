@@ -170,8 +170,8 @@ class TrackingSampler(torch.utils.data.Dataset):
 
                 H, W, _ = day_template_frames[0].shape
                 print("reached here")
-                style_template_frames = copy.deepcopy(day_template_frames)
-                style_search_frames = copy.deepcopy(day_search_frames)
+                style_template_frames = np.copy(day_template_frames)
+                style_search_frames = np.copy(day_search_frames)
                 style_template_anno = copy.deepcopy(style_template_anno)
                 style_search_anno = copy.deepcopy(style_search_anno)
                 print("reached here also ")

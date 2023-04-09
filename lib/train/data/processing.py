@@ -125,69 +125,37 @@ class MixformerProcessing(BaseProcessing):
                 'template_images', 'search_images', 'template_anno', 'search_anno', 'test_proposals', 'proposal_iou'
         """
         # Apply joint transforms
-        print("reached here -2")
         if self.transform['joint'] is not None:
             data['template_images'], data['template_anno'] = self.transform['joint'](
                 image=data['template_images'], bbox=data['template_anno'])
-            print("reached here -1")
             data['search_images'], data['search_anno'] = self.transform['joint'](
                 image=data['search_images'], bbox=data['search_anno'], new_roll=False)
-        print("reached here 0")
         for s in ['template', 'search']:
             assert self.mode == 'sequence' or len(data[s + '_images']) == 1, \
                 "In pair mode, num train/test frames must be 1"
 
             # Add a uniform noise to the center pos
             jittered_anno = [self._get_jittered_box(a, s) for a in data[s + '_anno']]
-            print("reached here 1")
             # 2021.1.9 Check whether data is valid. Avoid too small bounding boxes
             w, h = torch.stack(jittered_anno, dim=0)[:, 2], torch.stack(jittered_anno, dim=0)[:, 3]
-            print("reached here 2")
+            # print("reached here 2")
             crop_sz = torch.ceil(torch.sqrt(w * h) * self.search_area_factor[s])
             if (crop_sz < 1).any():
                 data['valid'] = False
                 # print("Too small box is found. Replace it with new data.")
                 return data
-            print("reached here 3")
             # Crop image region centered at jittered_anno box and get the attention mask
             crops, boxes = prutils.jittered_center_crop(data[s + '_images'], jittered_anno,
                                                                               data[s + '_anno'], self.search_area_factor[s],
                                                                               self.output_sz[s])
             # Apply transforms  
-            print("reached here 4")
             data[s + '_images'], data[s + '_anno'] = self.transform[s](
                 image=crops, bbox=boxes, joint=False)
-            print("reached here 5")
-            # 2021.1.9 Check whether elements in data[s + '_att'] is all 1
-            # Note that type of data[s + '_att'] is tuple, type of ele is torch.tensor
-            # for ele in data[s + '_att']:
-            #     if (ele == 1).all():
-            #         data['valid'] = False
-            #         # print("Values of original attention mask are all one. Replace it with new data.")
-            #         return data
-            # 2021.1.10 more strict conditions: require the donwsampled masks not to be all 1
-            # for ele in data[s + '_att']:
-            #     feat_size = self.output_sz[s] // 16  # 16 is the backbone stride
-            #     # (1,1,128,128) (1,1,256,256) --> (1,1,8,8) (1,1,16,16)
-            #     mask_down = F.interpolate(ele[None, None].float(), size=feat_size).to(torch.bool)[0]
-            #     if (mask_down == 1).all():
-            #         data['valid'] = False
-            #         # print("Values of down-sampled attention mask are all one. "
-            #         #       "Replace it with new data.")
-            #         return data
-        print("reached here 6")
         data['valid'] = True
-        # if we use copy-and-paste augmentation
-        # if data["template_masks"] is None or data["search_masks"] is None:
-        #     data["template_masks"] = torch.zeros((1, self.output_sz["template"], self.output_sz["template"]))
-        #     data["search_masks"] = torch.zeros((1, self.output_sz["search"], self.output_sz["search"]))
-        # Prepare output
-        print("reached here 7")
         if self.mode == 'sequence':
             data = data.apply(stack_tensors)
         else:
             data = data.apply(lambda x: x[0] if isinstance(x, list) else x)
-        print("reached here 8")
         return data
 
     def _generate_regression_mask(self, target_center, mask_w, mask_h, mask_size=20):

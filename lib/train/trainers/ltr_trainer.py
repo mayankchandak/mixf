@@ -92,14 +92,6 @@ class LTRTrainer(BaseTrainer):
             night_data = next(nat_loader_iter)
             # style_data = day_data.detach().clone()
             print("Debug")
-            # for key in day_data:
-            #     print(key, end=" ")
-            #     try:
-            #         print(day_data[key].shape)
-            #     except:
-            #         print(len(day_data[key]))
-            # print(len(day_data['original_template_images']), len(day_data['original_template_images'][0]), day_data['original_template_images'][0][0].shape)
-
             # cv2.imwrite("file.jpg", day_data['original_template_images'][0][0])
             if self.move_data_to_gpu:
                 day_data = day_data.to(self.device)

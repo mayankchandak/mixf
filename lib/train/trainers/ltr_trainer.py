@@ -92,16 +92,14 @@ class LTRTrainer(BaseTrainer):
             night_data = next(nat_loader_iter)
             style_data = {
                 'template_images':day_data['template_images'],
-                'template_anno':day_data['template_anno'],
-                'template_masks':day_data['template_masks'],
+                # 'template_anno':day_data['template_anno'],
+                # 'template_masks':day_data['template_masks'],
                 'search_images':day_data['search_images'],
                 'search_anno':day_data['search_anno'],
-                'search_masks':day_data['search_masks'],
-                'dataset': day_data['dataset'],
-                'test_class': day_data['test_class'],
-                # 'template_att': day_data['template_att'],
-                # 'search_att': day_data['search_att'],
-                'valid': day_data['valid']
+                # 'search_masks':day_data['search_masks'],
+                # 'dataset': day_data['dataset'],
+                # 'test_class': day_data['test_class'],
+                # 'valid': day_data['valid']
             }
             print("Debug")
             for key in day_data:

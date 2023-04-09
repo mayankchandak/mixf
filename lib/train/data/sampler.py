@@ -251,8 +251,8 @@ class TrackingSampler(torch.utils.data.Dataset):
             'night_template_anno': night_data['template_anno'],
             'night_search_images': night_data['search_images'],
             'night_search_anno': night_data['search_anno'],
-            'style_template_images': style_data['template_images'],
-            'style_search_images': style_data['search_images']
+            'style_template_images': day_data['template_images'],
+            'style_search_images': day_data['search_images']
         })
         
         return data

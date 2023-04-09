@@ -5,7 +5,7 @@ import numpy as np
 import cv2
 import torch
 import torchvision.transforms as transforms
-
+import copy
 
 def calc_mean_std(feat, eps=1e-5):
     C = feat.size(0)
@@ -169,16 +169,25 @@ class TrackingSampler(torch.utils.data.Dataset):
                 day_search_frames, day_search_anno, _ = dataset.get_frames(seq_id, search_frame_ids, seq_info_dict)
 
                 H, W, _ = day_template_frames[0].shape
- 
+
+                style_template_frames = copy.deepcopy(day_template_frames)
+                style_search_frames = copy.deepcopy(day_search_frames)
+                style_template_anno = copy.deepcopy(style_template_anno)
+                style_search_anno = copy.deepcopy(style_search_anno)
+                if day_template_frames == style_template_frames and day_search_frames == style_search_frames and day_template_anno == style_template_anno and day_search_anno == style_search_anno:
+                    print("Okay")
+                else:
+                    print("Not okay | unequal")
+
                 day_data = TensorDict({'template_images': day_template_frames,
                                    'template_anno': day_template_anno['bbox'],
                                    'search_images': day_search_frames,
                                    'search_anno': day_search_anno['bbox']
                                 })
                 # make data augmentation
-                print("DayBefore: ", day_template_frames[0][0][0], day_data['template_anno'], day_data['search_anno'])
+                # print("DayBefore: ", day_template_frames[0][0][0], day_data['template_anno'], day_data['search_anno'])
                 day_data = self.processing(day_data)
-                print("DayAfter: ", day_data['template_images'][0][0][0], day_data['template_anno'], day_data['search_anno'])
+                # print("DayAfter: ", day_data['template_images'][0][0][0], day_data['template_anno'], day_data['search_anno'])
                 valid = day_data['valid']
                 
             except:
@@ -234,16 +243,17 @@ class TrackingSampler(torch.utils.data.Dataset):
                 
             except:
                 valid = False
-        style_template_frames = [c for c,s in zip(day_template_frames, night_template_frames)]
-        style_search_frames = [c for c,s in zip(day_search_frames, night_search_frames)]
+        # style_template_frames = [c for c,s in zip(day_template_frames, night_template_frames)]
+        # style_search_frames = [c for c,s in zip(day_search_frames, night_search_frames)]
         style_data = TensorDict({'template_images': style_template_frames,
-                                'template_anno': day_template_anno['bbox'],
+                                'template_anno': style_template_anno['bbox'],
                                 'search_images': style_search_frames,
-                                'search_anno': day_search_anno['bbox']
+                                'search_anno': style_search_anno['bbox']
                             })
-        print("StyleBefore: ", style_template_frames[0][0][0], style_data['template_anno'], style_data['search_anno'])
+    
+        # print("StyleBefore: ", style_template_frames[0][0][0], style_data['template_anno'], style_data['search_anno'])
         style_data = self.processing(style_data)
-        print("StyleAfter: ", style_data['template_images'][0][0][0], style_data['template_anno'], style_data['search_anno'])
+        # print("StyleAfter: ", style_data['template_images'][0][0][0], style_data['template_anno'], style_data['search_anno'])
 
         data = TensorDict({
             'day_template_images': day_data['template_images'],

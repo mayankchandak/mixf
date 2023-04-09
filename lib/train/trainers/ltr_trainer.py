@@ -121,6 +121,7 @@ class LTRTrainer(BaseTrainer):
             style_data['settings'] = self.settings
 
             _, _, style_loss, _ = self.actor(style_data)
+            print("Debug style loss", style_loss.item())
             
             night_template_out, night_search_out, _, _ = self.actor(night_data)
 
@@ -139,6 +140,7 @@ class LTRTrainer(BaseTrainer):
             else:
                 with autocast():
                     day_template_out, day_search_out, loss, stats = self.actor(day_data)
+                    print("Debug loss", loss.item())
             stats['Loss/style'] = style_loss.item()
             loss +=  0.01 * style_loss
             loss /= self.accum_iter

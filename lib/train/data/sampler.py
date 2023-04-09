@@ -166,8 +166,7 @@ class TrackingSampler(torch.utils.data.Dataset):
                 data = TensorDict({'template_images': template_frames,
                                    'template_anno': template_anno['bbox'],
                                    'search_images': search_frames,
-                                   'search_anno': search_anno['bbox'],
-                                   'dataset': dataset.get_name()
+                                   'search_anno': search_anno['bbox']
                                 })
                 # make data augmentation
                 

@@ -170,10 +170,12 @@ class TrackingSampler(torch.utils.data.Dataset):
 
                 H, W, _ = day_template_frames[0].shape
                 print("reached here")
-                style_template_frames = np.copy(day_template_frames)
-                style_search_frames = np.copy(day_search_frames)
-                style_template_anno = copy.deepcopy(style_template_anno)
-                style_search_anno = copy.deepcopy(style_search_anno)
+                try:
+                    style_template_frames = np.copy(day_template_frames)
+                    style_search_frames = np.copy(day_search_frames)
+                    style_template_anno = copy.deepcopy(style_template_anno)
+                    style_search_anno = copy.deepcopy(style_search_anno)
+                except Exception as e: print(e)
                 print("reached here also ")
                 if day_template_frames == style_template_frames and day_search_frames == style_search_frames and day_template_anno == style_template_anno and day_search_anno == style_search_anno:
                     print("Okay")

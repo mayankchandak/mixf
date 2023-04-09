@@ -99,9 +99,9 @@ class LTRTrainer(BaseTrainer):
                                    'search_images': data['night_search_images'],
                                    'search_anno': data['night_search_anno']
                                 })
-            style_data = TensorDict({'template_images': data['style_template_images'],
+            style_data = TensorDict({'template_images': data['day_template_images'],
                                    'template_anno': data['day_template_anno'],
-                                   'search_images': data['style_search_images'],
+                                   'search_images': data['day_search_images'],
                                    'search_anno': data['day_search_anno']
                                 })
             # night_data = next(nat_loader_iter)

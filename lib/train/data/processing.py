@@ -125,9 +125,11 @@ class MixformerProcessing(BaseProcessing):
                 'template_images', 'search_images', 'template_anno', 'search_anno', 'test_proposals', 'proposal_iou'
         """
         # Apply joint transforms
+        print("reached here -2")
         if self.transform['joint'] is not None:
             data['template_images'], data['template_anno'] = self.transform['joint'](
                 image=data['template_images'], bbox=data['template_anno'])
+            print("reached here -1")
             data['search_images'], data['search_anno'] = self.transform['joint'](
                 image=data['search_images'], bbox=data['search_anno'], new_roll=False)
         print("reached here 0")

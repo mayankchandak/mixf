@@ -2,6 +2,7 @@ import random
 import torch.utils.data
 from lib.utils import TensorDict
 import numpy as np
+import cv2
 
 
 def no_processing(data):

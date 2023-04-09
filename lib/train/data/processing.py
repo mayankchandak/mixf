@@ -153,7 +153,7 @@ class MixformerProcessing(BaseProcessing):
                                                                               self.output_sz[s])
             # Apply transforms
             data[s + '_images'], data[s + '_anno'] = self.transform[s](
-                image=crops, bbox=boxess, joint=False)
+                image=crops, bbox=boxes, joint=False)
 
             # 2021.1.9 Check whether elements in data[s + '_att'] is all 1
             # Note that type of data[s + '_att'] is tuple, type of ele is torch.tensor

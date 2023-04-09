@@ -158,7 +158,7 @@ class TrackingSampler(torch.utils.data.Dataset):
                 template_frame_ids = [1] * self.num_template_frames
                 search_frame_ids = [1] * self.num_search_frames
             try:
-                template_frames, _, _ = dataset.get_frames(seq_id, template_frame_ids, seq_info_dict)
+                template_frames, template_anno, _ = dataset.get_frames(seq_id, template_frame_ids, seq_info_dict)
                 search_frames, search_anno, _ = dataset.get_frames(seq_id, search_frame_ids, seq_info_dict)
 
                 H, W, _ = template_frames[0].shape

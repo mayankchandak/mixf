@@ -90,8 +90,8 @@ class LTRTrainer(BaseTrainer):
         for data_iter_step in range(1, dataset_size + 1):
             day_data = next(loader_iter)
             night_data = next(nat_loader_iter)
-            style_data = day_data.detach().clone()
-            # print("Debug")
+            # style_data = day_data.detach().clone()
+            print("Debug")
             # for key in day_data:
             #     print(key, end=" ")
             #     try:

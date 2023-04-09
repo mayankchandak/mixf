@@ -177,7 +177,7 @@ class TrackingSampler(torch.utils.data.Dataset):
                     style_search_anno = copy.deepcopy(day_search_anno)
 
                     print("reached here also ")
-                    if (day_template_frames == style_template_frames) and (day_search_frames == style_search_frames) and (day_template_anno == style_template_anno) and (day_search_anno == style_search_anno):
+                    if (day_template_frames == style_template_frames).all() and (day_search_frames == style_search_frames).all() and (day_template_anno == style_template_anno) and (day_search_anno == style_search_anno):
                         print("Okay")
                     else:
                         print("Not okay | unequal")

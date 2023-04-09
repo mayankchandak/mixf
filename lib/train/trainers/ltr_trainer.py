@@ -86,14 +86,11 @@ class LTRTrainer(BaseTrainer):
         target_label = 1
         # for data_iter_step, data in enumerate(loader, 1):
         dataset_size = min(len(loader), len(self.nat_loader))
-        print("Debug | Dataset size :", dataset_size)
+        print("Dataset size :", dataset_size)
         for data_iter_step in range(1, dataset_size + 1):
-            print("Debug 0")
             day_data = next(loader_iter)
-            print("Debug 1")
             night_data = next(nat_loader_iter)
             # style_data = day_data.detach().clone()
-            print("Debug")
             # cv2.imwrite("file.jpg", day_data['original_template_images'][0][0])
             if self.move_data_to_gpu:
                 day_data = day_data.to(self.device)

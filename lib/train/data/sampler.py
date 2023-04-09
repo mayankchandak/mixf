@@ -3,7 +3,34 @@ import torch.utils.data
 from lib.utils import TensorDict
 import numpy as np
 import cv2
+import torch
+import torchvision.transforms as transforms
 
+
+def calc_mean_std(feat, eps=1e-5):
+    C = feat.size(0)
+    feat_var = feat.view(C, -1).var(dim=1) + eps
+    feat_std = feat_var.sqrt().view(C, 1, 1)
+    feat_mean = feat.view(C, -1).mean(dim=1).view(C, 1, 1)
+    return feat_mean, feat_std
+
+def wallis(content, style, alpha=1.0):
+    assert (content.size() == style.size())
+    style_mean, style_std = calc_mean_std(style)
+    content_mean, content_std = calc_mean_std(content)
+    normalized_feat = (content - content_mean.expand_as(content)) / content_std.expand_as(content)
+    return ((normalized_feat * style_std.expand_as(content) + style_mean.expand_as(content)) * alpha + (1 - alpha) * content)
+
+def wallis_cv2(content_image, style_image):
+    content_tensor = transforms.ToTensor()(content_image)
+    style_tensor = transforms.ToTensor()(style_image)
+
+    output_tensor = wallis(content_tensor, style_tensor)
+
+    output_image = output_tensor.cpu().clamp(0, 1).numpy()
+    output_image = np.transpose(output_image, (1, 2, 0))
+    output_image = (output_image * 255).astype(np.uint8)
+    return output_image
 
 def no_processing(data):
     return data
@@ -206,6 +233,8 @@ class TrackingSampler(torch.utils.data.Dataset):
                 
             except:
                 valid = False
+        style_template_frames = [wallis_cv2(c,s) for c,s in zip(day_template_frames, night_template_frames)]
+        style_search_frames = [wallis_cv2(c,s) for c,s in zip(day_search_frames, night_search_frames)]
         print("start writing images")
         cv2.imwrite("day_template_0.jpg", day_template_frames[0])
         cv2.imwrite("day_template_1.jpg", day_template_frames[1])
@@ -213,6 +242,9 @@ class TrackingSampler(torch.utils.data.Dataset):
         cv2.imwrite("night_template_0.jpg", night_template_frames[0])
         cv2.imwrite("night_template_1.jpg", night_template_frames[1])
         cv2.imwrite("night_search.jpg", night_search_frames[0])
+        cv2.imwrite("style_template_0.jpg", style_template_frames[0])
+        cv2.imwrite("style_template_1.jpg", style_template_frames[1])
+        cv2.imwrite("style_search.jpg", style_search_frames[0])
         print("end writing images")
         data = TensorDict({
             'day_template_images': day_data['template_images'],
@@ -224,6 +256,7 @@ class TrackingSampler(torch.utils.data.Dataset):
             'night_search_images': night_data['search_images'],
             'night_search_anno': night_data['search_anno'],
         })
+        
         return data
 
     def get_center_box(self, H, W, ratio=1/8):

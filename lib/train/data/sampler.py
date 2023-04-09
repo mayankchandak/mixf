@@ -178,6 +178,7 @@ class TrackingSampler(torch.utils.data.Dataset):
                 # make data augmentation
                 print("Before: ", day_template_frames[0][0][0], day_template_anno['bbox'], day_search_anno['bbox'])
                 day_data = self.processing(day_data)
+                print("Before1: ", day_template_frames[0][0][0], day_template_anno['bbox'], day_search_anno['bbox'])
                 valid = day_data['valid']
                 
             except:
@@ -242,6 +243,7 @@ class TrackingSampler(torch.utils.data.Dataset):
                             })
         print("After: ", day_template_frames[0][0][0], day_template_anno['bbox'], day_search_anno['bbox'])
         style_data = self.processing(style_data)
+        print("After1: ", day_template_frames[0][0][0], day_template_anno['bbox'], day_search_anno['bbox'])
 
         data = TensorDict({
             'day_template_images': day_data['template_images'],

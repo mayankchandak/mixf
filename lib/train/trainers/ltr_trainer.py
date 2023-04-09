@@ -110,11 +110,15 @@ class LTRTrainer(BaseTrainer):
             if self.move_data_to_gpu:
                 day_data = day_data.to(self.device)
                 night_data = night_data.to(self.device)
+                style_data = style_data.to(self.device)
             day_data['epoch'] = self.epoch
             day_data['settings'] = self.settings
             
             night_data['epoch'] = self.epoch
             night_data['settings'] = self.settings
+
+            style_data['epoch'] = self.epoch
+            style_data['settings'] = self.settings
 
             _, _, style_loss, _ = self.actor(style_data)
             

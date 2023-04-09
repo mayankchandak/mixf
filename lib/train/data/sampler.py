@@ -22,8 +22,8 @@ def wallis(content, style, alpha=1.0):
     return ((normalized_feat * style_std.expand_as(content) + style_mean.expand_as(content)) * alpha + (1 - alpha) * content)
 
 def wallis_cv2(content_image, style_image):
-    content_tensor = transforms.ToTensor()(content_image)
-    style_tensor = transforms.ToTensor()(style_image)
+    content_tensor = transforms.ToTensor()(content_image).cuda()
+    style_tensor = transforms.ToTensor()(style_image).cuda()
 
     output_tensor = wallis(content_tensor, style_tensor)
 

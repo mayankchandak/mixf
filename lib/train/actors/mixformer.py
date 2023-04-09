@@ -86,8 +86,8 @@ class MixFormerActor(BaseActor):
                 status = {"Loss/total": loss.item(),
                           "Loss/ciou": ciou_loss.item(),
                           "Loss/l1": l1_loss.item(),
-                          "IoU": mean_iou.item()#,
-                        #   "Loss/recons": recons_loss.item()
+                          "IoU": mean_iou.item(),
+                          "Loss/recons": recons_loss.item()
                           }
             return loss, status
         else:

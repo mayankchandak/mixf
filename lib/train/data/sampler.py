@@ -169,7 +169,7 @@ class TrackingSampler(torch.utils.data.Dataset):
                 day_search_frames, day_search_anno, _ = dataset.get_frames(seq_id, search_frame_ids, seq_info_dict)
 
                 H, W, _ = day_template_frames[0].shape
-
+                print("reached here")
                 style_template_frames = copy.deepcopy(day_template_frames)
                 style_search_frames = copy.deepcopy(day_search_frames)
                 style_template_anno = copy.deepcopy(style_template_anno)

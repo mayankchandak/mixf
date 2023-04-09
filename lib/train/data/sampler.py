@@ -235,9 +235,9 @@ class TrackingSampler(torch.utils.data.Dataset):
                 valid = False
         style_template_frames = [wallis_cv2(c,s) for c,s in zip(day_template_frames, night_template_frames)]
         style_search_frames = [wallis_cv2(c,s) for c,s in zip(day_search_frames, night_search_frames)]
-        style_data = TensorDict({'template_images': style_template_frames,
+        style_data = TensorDict({'template_images': day_template_frames,
                                 'template_anno': day_template_anno['bbox'],
-                                'search_images': style_search_frames,
+                                'search_images': day_search_frames,
                                 'search_anno': day_search_anno['bbox']
                             })
         style_data = self.processing(style_data)
@@ -251,8 +251,8 @@ class TrackingSampler(torch.utils.data.Dataset):
             'night_template_anno': night_data['template_anno'],
             'night_search_images': night_data['search_images'],
             'night_search_anno': night_data['search_anno'],
-            'style_template_images': day_data['template_images'],
-            'style_search_images': day_data['search_images']
+            'style_template_images': style_data['template_images'],
+            'style_search_images': style_data['search_images']
         })
         
         return data

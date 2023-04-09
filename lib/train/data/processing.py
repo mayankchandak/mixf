@@ -337,7 +337,8 @@ class MixformerProcessing(BaseProcessing):
             # mask_w, mask_h = search_anno[:, 2] * mask_scale_w, search_anno[:, 3] * mask_scale_h
             #
             # data['reg_mask'] = self._generate_regression_mask(target_center, mask_w, mask_h, self.out_feat_sz)
-
+        del data['search_att']
+        del data['template_att']
         return data
 
     def _generate_regression_mask(self, target_center, mask_w, mask_h, mask_size=20):

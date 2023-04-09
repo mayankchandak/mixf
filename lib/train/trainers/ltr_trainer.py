@@ -90,6 +90,13 @@ class LTRTrainer(BaseTrainer):
         for data_iter_step in range(1, dataset_size + 1):
             day_data = next(loader_iter)
             night_data = next(nat_loader_iter)
+            print("Debug")
+            for key in day_data:
+                print(key, end=" ")
+                try:
+                    print(day_data[key].shape)
+                except:
+                    print(len(day_data[key]))
             print(len(day_data['original_template_images']), len(day_data['original_template_images'][0]), day_data['original_template_images'][0][0].shape)
 
             cv2.imwrite("file.jpg", day_data['original_template_images'][0][0])

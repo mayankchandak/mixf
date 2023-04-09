@@ -120,9 +120,7 @@ class LTRTrainer(BaseTrainer):
             style_data['epoch'] = self.epoch
             style_data['settings'] = self.settings
 
-            _, _, style_loss, _ = self.actor(style_data)
-            print("Debug style loss", style_loss.item())
-            
+            _, _, style_loss, _ = self.actor(style_data)            
             night_template_out, night_search_out, _, _ = self.actor(night_data)
 
             for param in self.Disc.parameters():
@@ -140,9 +138,8 @@ class LTRTrainer(BaseTrainer):
             else:
                 with autocast():
                     day_template_out, day_search_out, loss, stats = self.actor(day_data)
-                    print("Debug loss", loss.item())
             stats['Loss/style'] = style_loss.item()
-            loss +=  0.01 * style_loss
+            loss = (loss + style_loss) / 2
             loss /= self.accum_iter
             # backward pass and update weights
             if loader.training:

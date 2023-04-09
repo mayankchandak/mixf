@@ -97,6 +97,7 @@ def build_dataloaders(cfg, settings):
     dataset_train = sampler.TrackingSampler(day_datasets=names2datasets(cfg.DATA.TRAIN.DATASETS_NAME, settings, opencv_loader),
                                             night_datasets=names2datasets(['NAT'], settings, opencv_loader),
                                             p_day_datasets=cfg.DATA.TRAIN.DATASETS_RATIO,
+                                            p_night_datasets=None,
                                             samples_per_epoch=cfg.DATA.TRAIN.SAMPLE_PER_EPOCH,
                                             max_gap=cfg.DATA.MAX_SAMPLE_INTERVAL, num_search_frames=settings.num_search,
                                             num_template_frames=settings.num_template, processing=data_processing_train,

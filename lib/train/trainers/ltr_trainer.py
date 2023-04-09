@@ -48,7 +48,7 @@ class LTRTrainer(BaseTrainer):
         self.settings = settings
         self.use_amp = use_amp
         self.accum_iter = accum_iter
-        self.nat_loader = nat_loader
+        # self.nat_loader = nat_loader
         self.optimizer_D = optimizer_D
         self.Disc = Disc
         self.data_processing_train = data_processing_train
@@ -81,15 +81,26 @@ class LTRTrainer(BaseTrainer):
         self.optimizer_D.zero_grad()
         
         loader_iter = iter(loader)
-        nat_loader_iter = iter(self.nat_loader)
+        # nat_loader_iter = iter(self.nat_loader)
         source_label = 0
         target_label = 1
         # for data_iter_step, data in enumerate(loader, 1):
-        dataset_size = min(len(loader), len(self.nat_loader))
+        # dataset_size = min(len(loader), len(self.nat_loader))
+        dataset_size = len(loader)
         print("Dataset size :", dataset_size)
         for data_iter_step in range(1, dataset_size + 1):
-            day_data = next(loader_iter)
-            night_data = next(nat_loader_iter)
+            data = next(loader_iter)
+            day_data = TensorDict({'template_images': data['day_template_images'],
+                                   'template_anno': data['day_template_anno'],
+                                   'search_images': data['day_search_images'],
+                                   'search_anno': data['day_search_anno']
+                                })
+            night_data = TensorDict({'template_images': data['night_template_images'],
+                                   'template_anno': data['night_template_anno'],
+                                   'search_images': data['night_search_images'],
+                                   'search_anno': data['night_search_anno']
+                                })
+            # night_data = next(nat_loader_iter)
 
             # cv2.imwrite("file.jpg", day_data['original_template_images'][0][0])
             if self.move_data_to_gpu:

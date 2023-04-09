@@ -20,7 +20,7 @@ class TrackingSampler(torch.utils.data.Dataset):
     The sampled frames are then passed through the input 'processing' function for the necessary processing-
     """
 
-    def __init__(self, datasets, p_datasets, samples_per_epoch, max_gap,
+    def __init__(self, day_datasets, night_datasets, p_day_datasets, p_night_datasets, samples_per_epoch, max_gap,
                  num_search_frames, num_template_frames=1, processing=no_processing, frame_sample_mode='causal',
                  train_cls=False, pos_prob=0.5):
         """
@@ -35,17 +35,22 @@ class TrackingSampler(torch.utils.data.Dataset):
             frame_sample_mode - Either 'causal' or 'interval'. If 'causal', then the test frames are sampled in a causally,
                                 otherwise randomly within the interval.
         """
-        self.datasets = datasets
+        self.day_datasets = day_datasets
+        self.night_datasets = night_datasets
         self.train_cls = train_cls  # whether we are training classification
         self.pos_prob = pos_prob  # probability of sampling positive class when making classification
 
         # If p not provided, sample uniformly from all videos
-        if p_datasets is None:
-            p_datasets = [len(d) for d in self.datasets]
-
+        if p_day_datasets is None:
+            p_day_datasets = [len(d) for d in self.day_datasets]
+        if p_night_datasets is None:
+            p_nightdatasets = [len(d) for d in self.night_datasets]
         # Normalize
-        p_total = sum(p_datasets)
-        self.p_datasets = [x / p_total for x in p_datasets]
+        p_total = sum(p_day_datasets)
+        self.p_day_datasets = [x / p_total for x in p_day_datasets]
+
+        p_total = sum(p_night_datasets)
+        self.p_night_datasets = [x / p_total for x in p_night_datasets]
 
         self.samples_per_epoch = samples_per_epoch
         self.max_gap = max_gap
@@ -92,10 +97,7 @@ class TrackingSampler(torch.utils.data.Dataset):
         return random.choices(valid_ids, k=num_ids)
 
     def __getitem__(self, index):
-        if self.train_cls:
-            return self.getitem_cls()
-        else:
-            return self.getitem()
+        return self.getitem()
 
     def getitem(self):
         """
@@ -103,10 +105,9 @@ class TrackingSampler(torch.utils.data.Dataset):
             TensorDict - dict containing all the data blocks
         """
         valid = False
-        # print("Entered getitem")
         while not valid:
             # Select a dataset
-            dataset = random.choices(self.datasets, self.p_datasets)[0]
+            dataset = random.choices(self.day_datasets, self.p_day_datasets)[0]
 
             is_video_dataset = dataset.is_video_sequence()
 
@@ -118,25 +119,58 @@ class TrackingSampler(torch.utils.data.Dataset):
                 search_frame_ids = None
                 gap_increase = 0
 
-                if self.frame_sample_mode == 'causal':
-                    # Sample test and train frames in a causal manner, i.e. search_frame_ids > template_frame_ids
-                    while search_frame_ids is None:
-                        base_frame_id = self._sample_visible_ids(visible, num_ids=1, min_id=self.num_template_frames - 1,
-                                                                 max_id=len(visible) - self.num_search_frames)
-                        prev_frame_ids = self._sample_visible_ids(visible, num_ids=self.num_template_frames - 1,
-                                                                  min_id=base_frame_id[0] - self.max_gap - gap_increase,
-                                                                  max_id=base_frame_id[0])
-                        if prev_frame_ids is None:
-                            gap_increase += 5
-                            continue
-                        template_frame_ids = base_frame_id + prev_frame_ids
-                        search_frame_ids = self._sample_visible_ids(visible, min_id=template_frame_ids[0] + 1,
-                                                                  max_id=template_frame_ids[0] + self.max_gap + gap_increase,
-                                                                  num_ids=self.num_search_frames)
-                        # Increase gap until a frame is found
+                while search_frame_ids is None:
+                    base_frame_id = self._sample_visible_ids(visible, num_ids=1, min_id=self.num_template_frames - 1,
+                                                                max_id=len(visible) - self.num_search_frames)
+                    prev_frame_ids = self._sample_visible_ids(visible, num_ids=self.num_template_frames - 1,
+                                                                min_id=base_frame_id[0] - self.max_gap - gap_increase,
+                                                                max_id=base_frame_id[0])
+                    if prev_frame_ids is None:
                         gap_increase += 5
-                elif self.frame_sample_mode == "interval":
-                    while search_frame_ids is None:
+                        continue
+                    template_frame_ids = base_frame_id + prev_frame_ids
+                    search_frame_ids = self._sample_visible_ids(visible, min_id=template_frame_ids[0] + 1,
+                                                                max_id=template_frame_ids[0] + self.max_gap + gap_increase,
+                                                                num_ids=self.num_search_frames)
+                    # Increase gap until a frame is found
+                    gap_increase += 5
+            else:
+                raise ValueError("Only video dataset supported")
+            try:
+                template_frames, template_anno, _ = dataset.get_frames(seq_id, template_frame_ids, seq_info_dict)
+                search_frames, search_anno, _ = dataset.get_frames(seq_id, search_frame_ids, seq_info_dict)
+
+                H, W, _ = template_frames[0].shape
+ 
+                day_data = TensorDict({'template_images': template_frames,
+                                   'template_anno': template_anno['bbox'],
+                                   'search_images': search_frames,
+                                   'search_anno': search_anno['bbox']
+                                })
+                # make data augmentation
+                
+                day_data = self.processing(day_data)
+                valid = day_data['valid']
+                
+            except:
+                valid = False
+        
+        valid = False
+        while not valid:
+            # Select a dataset
+            dataset = random.choices(self.night_datasets, self.p_night_datasets)[0]
+
+            is_video_dataset = dataset.is_video_sequence()
+
+            # sample a sequence from the given dataset
+            seq_id, visible, seq_info_dict = self.sample_seq_from_dataset(dataset, is_video_dataset)
+
+            if is_video_dataset:
+                template_frame_ids = None
+                search_frame_ids = None
+                gap_increase = 0
+
+                while search_frame_ids is None:
                         base_frame_id = self._sample_visible_ids(visible, num_ids=1, min_id=self.num_template_frames - 1,
                                                                  max_id=len(visible) - self.num_search_frames, allow_invisible=True)
                         prev_frame_ids = self._sample_visible_ids(visible, num_ids=self.num_template_frames - 1,
@@ -151,8 +185,6 @@ class TrackingSampler(torch.utils.data.Dataset):
                                                                   num_ids=self.num_search_frames, allow_invisible=True)
                         # Increase gap until a frame is found
                         gap_increase += 5
-                else:
-                    raise ValueError("Illegal frame sample mode")
             else:
                 raise ValueError("Only video dataset supported")
             try:
@@ -161,22 +193,29 @@ class TrackingSampler(torch.utils.data.Dataset):
 
                 H, W, _ = template_frames[0].shape
  
-                data = TensorDict({'template_images': template_frames,
+                night_data = TensorDict({'template_images': template_frames,
                                    'template_anno': template_anno['bbox'],
                                    'search_images': search_frames,
                                    'search_anno': search_anno['bbox']
                                 })
                 # make data augmentation
                 
-                data = self.processing(data)
-                valid = data['valid']
+                night_data = self.processing(night_data)
+                valid = night_data['valid']
                 
             except:
                 valid = False
+        data = TensorDict({
+            'day_template_images': day_data['template_images'],
+            'day_template_anno': day_data['template_anno'],
+            'day_search_images': day_data['search_images'],
+            'day_search_anno': day_data['search_anno'],
+            'night_template_images': night_data['template_images'],
+            'night_template_anno': night_data['template_anno'],
+            'night_search_images': night_data['search_images'],
+            'night_search_anno': night_data['search_anno'],
+        })
         return data
-
-    def getitem_cls(self):
-        raise NotImplementedError
 
     def get_center_box(self, H, W, ratio=1/8):
         cx, cy, w, h = W/2, H/2, W * ratio, H * ratio
@@ -199,46 +238,3 @@ class TrackingSampler(torch.utils.data.Dataset):
 
             enough_visible_frames = enough_visible_frames or not is_video_dataset
         return seq_id, visible, seq_info_dict
-
-    def get_one_search(self):
-        # Select a dataset
-        dataset = random.choices(self.datasets, self.p_datasets)[0]
-
-        is_video_dataset = dataset.is_video_sequence()
-        # sample a sequence
-        seq_id, visible, seq_info_dict = self.sample_seq_from_dataset(dataset, is_video_dataset)
-        # sample a frame
-        if is_video_dataset:
-            if self.frame_sample_mode == "stark":
-                search_frame_ids = self._sample_visible_ids(seq_info_dict["valid"], num_ids=1)
-            else:
-                search_frame_ids = self._sample_visible_ids(visible, num_ids=1, allow_invisible=True)
-        else:
-            search_frame_ids = [1]
-        # get the image, bounding box and other info
-        search_frames, search_anno, meta_obj_test = dataset.get_frames(seq_id, search_frame_ids, seq_info_dict)
-
-        return search_frames, search_anno, meta_obj_test
-
-        # get template and search ids in a 'stark' manner
-        template_frame_ids_extra = []
-        while None in template_frame_ids_extra or len(template_frame_ids_extra) == 0:
-            template_frame_ids_extra = []
-            # first randomly sample two frames from a video
-            template_frame_id1 = self._sample_visible_ids(visible, num_ids=1)  # the initial template id
-            search_frame_ids = self._sample_visible_ids(visible, num_ids=1)  # the search region id
-            # get the dynamic template id
-            for max_gap in self.max_gap:
-                if template_frame_id1[0] >= search_frame_ids[0]:
-                    min_id, max_id = search_frame_ids[0], search_frame_ids[0] + max_gap
-                else:
-                    min_id, max_id = search_frame_ids[0] - max_gap, search_frame_ids[0]
-                """we require the frame to be valid but not necessary visible"""
-                f_id = self._sample_visible_ids(valid, num_ids=1, min_id=min_id, max_id=max_id)
-                if f_id is None:
-                    template_frame_ids_extra += [None]
-                else:
-                    template_frame_ids_extra += f_id
-
-        template_frame_ids = template_frame_id1 + template_frame_ids_extra
-        return template_frame_ids, search_frame_ids

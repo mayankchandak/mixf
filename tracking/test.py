@@ -45,7 +45,7 @@ def main():
     parser.add_argument('--threads', type=int, default=1, help='Number of threads.')
     parser.add_argument('--num_gpus', type=int, default=1)
 
-    parser.add_argument('--params__model', type=str, default='mixformer_vit_disc15.pth', help="Tracking model path.")
+    parser.add_argument('--params__model', type=str, default='MixFormer_all_10.pth.tar', help="Tracking model path.")
     parser.add_argument('--params__update_interval', type=int, default=None, help="Update interval of online tracking.")
     parser.add_argument('--params__online_sizes', type=int, default=None)
     parser.add_argument('--params__search_area_scale', type=float, default=None)

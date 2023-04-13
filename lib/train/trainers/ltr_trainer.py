@@ -72,7 +72,7 @@ class LTRTrainer(BaseTrainer):
 
         self.actor.train(loader.training)
         torch.set_grad_enabled(loader.training)
-        self.Disc.train()
+        # self.Disc.train()
 
         self._init_timing()
 

@@ -86,15 +86,15 @@ def run(settings):
     use_amp = getattr(cfg.TRAIN, "AMP", False)
     accum_iter = getattr(cfg.TRAIN, "ACCUM_ITER", 1)
 
-    model_Disc = TransformerDiscriminator(channels=256)
-    optimizer_D = torch.optim.Adam(model_Disc.parameters(), lr=0.005, betas=(0.9, 0.99))
-    model_Disc.cuda().train()
+    model_Disc = None
+    optimizer_D = None
+    # model_Disc.cuda().train()
 
-    if settings.local_rank != -1:
-        model_Disc = DDP(model_Disc, device_ids=[settings.local_rank], find_unused_parameters=True)
-        settings.device = torch.device("cuda:%d" % settings.local_rank)
-    else:
-        settings.device = torch.device("cuda:0")
+    # if settings.local_rank != -1:
+    #     # model_Disc = DDP(model_Disc, device_ids=[settings.local_rank], find_unused_parameters=True)
+    #     settings.device = torch.device("cuda:%d" % settings.local_rank)
+    # else:
+    #     settings.device = torch.device("cuda:0")
 
     trainer = LTRTrainer(actor, [loader_train], optimizer, settings, model_Disc, optimizer_D, lr_scheduler, accum_iter=accum_iter, use_amp=use_amp)
 

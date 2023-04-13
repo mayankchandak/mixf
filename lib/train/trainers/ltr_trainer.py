@@ -50,8 +50,8 @@ class LTRTrainer(BaseTrainer):
         self.use_amp = use_amp
         self.accum_iter = accum_iter
         # self.nat_loader = nat_loader
-        self.optimizer_D = optimizer_D
-        self.Disc = Disc
+        # self.optimizer_D = optimizer_D
+        # self.Disc = Disc
 
         if use_amp:
             print("Using amp")
@@ -77,12 +77,12 @@ class LTRTrainer(BaseTrainer):
         self._init_timing()
 
         self.optimizer.zero_grad()
-        self.optimizer_D.zero_grad()
+        # self.optimizer_D.zero_grad()
         
         loader_iter = iter(loader)
         # nat_loader_iter = iter(self.nat_loader)
-        source_label = 0
-        target_label = 1
+        # source_label = 0
+        # target_label = 1
         # for data_iter_step, data in enumerate(loader, 1):
         # dataset_size = min(len(loader), len(self.nat_loader))
         dataset_size = len(loader)
@@ -94,44 +94,44 @@ class LTRTrainer(BaseTrainer):
                                    'search_images': data['day_search_images'],
                                    'search_anno': data['day_search_anno']
                                 })
-            night_data = TensorDict({'template_images': data['night_template_images'],
-                                   'template_anno': data['night_template_anno'],
-                                   'search_images': data['night_search_images'],
-                                   'search_anno': data['night_search_anno']
-                                })
-            style_data = TensorDict({'template_images': data['style_template_images'],
-                                   'template_anno': data['style_template_anno'],
-                                   'search_images': data['style_search_images'],
-                                   'search_anno': data['style_search_anno']
-                                })
+            # night_data = TensorDict({'template_images': data['night_template_images'],
+            #                        'template_anno': data['night_template_anno'],
+            #                        'search_images': data['night_search_images'],
+            #                        'search_anno': data['night_search_anno']
+            #                     })
+            # style_data = TensorDict({'template_images': data['style_template_images'],
+            #                        'template_anno': data['style_template_anno'],
+            #                        'search_images': data['style_search_images'],
+            #                        'search_anno': data['style_search_anno']
+            #                     })
             # night_data = next(nat_loader_iter)
 
             # cv2.imwrite("file.jpg", day_data['original_template_images'][0][0])
             if self.move_data_to_gpu:
                 day_data = day_data.to(self.device)
-                night_data = night_data.to(self.device)
-                style_data = style_data.to(self.device)
+                # night_data = night_data.to(self.device)
+                # style_data = style_data.to(self.device)
             day_data['epoch'] = self.epoch
             day_data['settings'] = self.settings
             
-            night_data['epoch'] = self.epoch
-            night_data['settings'] = self.settings
+            # night_data['epoch'] = self.epoch
+            # night_data['settings'] = self.settings
 
-            style_data['epoch'] = self.epoch
-            style_data['settings'] = self.settings
+            # style_data['epoch'] = self.epoch
+            # style_data['settings'] = self.settings
 
-            _, _, style_loss, _ = self.actor(style_data)            
-            night_template_out, night_search_out, _, _ = self.actor(night_data)
+            # _, _, style_loss, _ = self.actor(style_data)            
+            # night_template_out, night_search_out, _, _ = self.actor(night_data)
 
-            for param in self.Disc.parameters():
-                param.requires_grad = False
-            Dzn = self.Disc(night_template_out)
-            Dxn = self.Disc(night_search_out)
-            D_source_label = torch.FloatTensor(Dzn.data.size()).fill_(source_label)
-            loss_adv = 0.01 * (weightedMSE(Dzn, D_source_label) +  weightedMSE(Dxn, D_source_label))
-            loss_adv_stat = loss_adv.item()
-            if is_valid_number(loss_adv.data.item()):
-                loss_adv.backward()
+            # for param in self.Disc.parameters():
+            #     param.requires_grad = False
+            # Dzn = self.Disc(night_template_out)
+            # Dxn = self.Disc(night_search_out)
+            # D_source_label = torch.FloatTensor(Dzn.data.size()).fill_(source_label)
+            # loss_adv = 0.01 * (weightedMSE(Dzn, D_source_label) +  weightedMSE(Dxn, D_source_label))
+            # loss_adv_stat = loss_adv.item()
+            # if is_valid_number(loss_adv.data.item()):
+            #     loss_adv.backward()
 
             # forward pass
             if not self.use_amp:
@@ -139,9 +139,9 @@ class LTRTrainer(BaseTrainer):
             else:
                 with autocast():
                     day_template_out, day_search_out, loss, stats = self.actor(day_data)
-            stats['Loss/style'] = style_loss.item()
-            stats['Loss/adv'] = loss_adv_stat
-            loss = (0.2 * style_loss + loss)
+            # stats['Loss/style'] = style_loss.item()
+            # stats['Loss/adv'] = loss_adv_stat
+            # loss = (0.2 * style_loss + loss)
             loss /= self.accum_iter
             # backward pass and update weights
             if loader.training:
@@ -160,20 +160,20 @@ class LTRTrainer(BaseTrainer):
             if (data_iter_step + 1) % self.accum_iter == 0:
                 self.optimizer.zero_grad()
             
-            for param in self.Disc.parameters():
-                param.requires_grad = True
-            night_template_out, night_search_out, day_template_out, day_search_out = \
-                night_template_out.detach().float(), night_search_out.detach().float(), day_template_out.detach().float(), day_search_out.detach().float()
-            Dn1, Dn2, Dd1, Dd2 = self.Disc(night_template_out), self.Disc(night_search_out), self.Disc(day_template_out), self.Disc(day_search_out)
-            Dt = torch.FloatTensor(Dn1.data.size()).fill_(target_label)
-            Ds = torch.FloatTensor(Dd1.data.size()).fill_(source_label)
-            loss_d = 0.1 * (weightedMSE(Dn1, Dt) + weightedMSE(Dn2, Dt) + weightedMSE(Dd1, Ds) + weightedMSE(Dd2, Ds))
-            if is_valid_number(loss_d.data.item()):
-                loss_d.backward() 
-            stats['Loss/Disc'] = loss_d.item()
-            clip_grad_norm_(self.Disc.parameters(), 0.1)
-            self.optimizer_D.step()
-            self.optimizer_D.zero_grad()
+            # for param in self.Disc.parameters():
+            #     param.requires_grad = True
+            # night_template_out, night_search_out, day_template_out, day_search_out = \
+            #     night_template_out.detach().float(), night_search_out.detach().float(), day_template_out.detach().float(), day_search_out.detach().float()
+            # Dn1, Dn2, Dd1, Dd2 = self.Disc(night_template_out), self.Disc(night_search_out), self.Disc(day_template_out), self.Disc(day_search_out)
+            # Dt = torch.FloatTensor(Dn1.data.size()).fill_(target_label)
+            # Ds = torch.FloatTensor(Dd1.data.size()).fill_(source_label)
+            # loss_d = 0.1 * (weightedMSE(Dn1, Dt) + weightedMSE(Dn2, Dt) + weightedMSE(Dd1, Ds) + weightedMSE(Dd2, Ds))
+            # if is_valid_number(loss_d.data.item()):
+            #     loss_d.backward() 
+            # stats['Loss/Disc'] = loss_d.item()
+            # clip_grad_norm_(self.Disc.parameters(), 0.1)
+            # self.optimizer_D.step()
+            # self.optimizer_D.zero_grad()
             
 
             torch.cuda.synchronize()

@@ -64,7 +64,7 @@ class MixFormerActor(BaseActor):
         l1_loss = self.objective['l1'](pred_boxes_vec, gt_boxes_vec)  # (BN,4) (BN,4)
 
         # weighted sum
-        loss = self.loss_weight['ciou'] * ciou_loss + self.loss_weight['l1'] * l1_loss + 0.01 * recons_loss
+        loss = self.loss_weight['ciou'] * ciou_loss + self.loss_weight['l1'] * l1_loss# + 0.01 * recons_loss
         # print(loss.shape, recons_loss.shape)
         # compute cls loss if neccessary
         if 'pred_scores' in pred_dict:
@@ -87,7 +87,7 @@ class MixFormerActor(BaseActor):
                           "Loss/ciou": ciou_loss.item(),
                           "Loss/l1": l1_loss.item(),
                           "IoU": mean_iou.item(),
-                          "Loss/recons": recons_loss.item()
+                        #   "Loss/recons": recons_loss.item()
                           }
             return loss, status
         else:

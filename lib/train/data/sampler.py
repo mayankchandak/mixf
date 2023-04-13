@@ -191,64 +191,64 @@ class TrackingSampler(torch.utils.data.Dataset):
             except:
                 valid = False
         
-        valid = False
-        while not valid:
-            # Select a dataset
-            dataset = random.choices(self.night_datasets, self.p_night_datasets)[0]
+        # valid = False
+        # while not valid:
+        #     # Select a dataset
+        #     dataset = random.choices(self.night_datasets, self.p_night_datasets)[0]
 
-            is_video_dataset = dataset.is_video_sequence()
+        #     is_video_dataset = dataset.is_video_sequence()
 
-            # sample a sequence from the given dataset
-            seq_id, visible, seq_info_dict = self.sample_seq_from_dataset(dataset, is_video_dataset)
+        #     # sample a sequence from the given dataset
+        #     seq_id, visible, seq_info_dict = self.sample_seq_from_dataset(dataset, is_video_dataset)
 
-            if is_video_dataset:
-                template_frame_ids = None
-                search_frame_ids = None
-                gap_increase = 0
+        #     if is_video_dataset:
+        #         template_frame_ids = None
+        #         search_frame_ids = None
+        #         gap_increase = 0
 
-                while search_frame_ids is None:
-                        base_frame_id = self._sample_visible_ids(visible, num_ids=1, min_id=self.num_template_frames - 1,
-                                                                 max_id=len(visible) - self.num_search_frames, allow_invisible=True)
-                        prev_frame_ids = self._sample_visible_ids(visible, num_ids=self.num_template_frames - 1,
-                                                                  min_id=base_frame_id[0] - self.max_gap - gap_increase,
-                                                                  max_id=base_frame_id[0], allow_invisible=True)
-                        if prev_frame_ids is None:
-                            gap_increase += 5
-                            continue
-                        template_frame_ids = base_frame_id + prev_frame_ids
-                        search_frame_ids = self._sample_visible_ids(visible, min_id=template_frame_ids[0] + 1,
-                                                                  max_id=template_frame_ids[0] + self.max_gap + gap_increase,
-                                                                  num_ids=self.num_search_frames, allow_invisible=True)
-                        # Increase gap until a frame is found
-                        gap_increase += 5
-            else:
-                raise ValueError("Only video dataset supported")
-            try:
-                night_template_frames, template_anno, _ = dataset.get_frames(seq_id, template_frame_ids, seq_info_dict)
-                night_search_frames, search_anno, _ = dataset.get_frames(seq_id, search_frame_ids, seq_info_dict)
+        #         while search_frame_ids is None:
+        #                 base_frame_id = self._sample_visible_ids(visible, num_ids=1, min_id=self.num_template_frames - 1,
+        #                                                          max_id=len(visible) - self.num_search_frames, allow_invisible=True)
+        #                 prev_frame_ids = self._sample_visible_ids(visible, num_ids=self.num_template_frames - 1,
+        #                                                           min_id=base_frame_id[0] - self.max_gap - gap_increase,
+        #                                                           max_id=base_frame_id[0], allow_invisible=True)
+        #                 if prev_frame_ids is None:
+        #                     gap_increase += 5
+        #                     continue
+        #                 template_frame_ids = base_frame_id + prev_frame_ids
+        #                 search_frame_ids = self._sample_visible_ids(visible, min_id=template_frame_ids[0] + 1,
+        #                                                           max_id=template_frame_ids[0] + self.max_gap + gap_increase,
+        #                                                           num_ids=self.num_search_frames, allow_invisible=True)
+        #                 # Increase gap until a frame is found
+        #                 gap_increase += 5
+        #     else:
+        #         raise ValueError("Only video dataset supported")
+        #     try:
+        #         night_template_frames, template_anno, _ = dataset.get_frames(seq_id, template_frame_ids, seq_info_dict)
+        #         night_search_frames, search_anno, _ = dataset.get_frames(seq_id, search_frame_ids, seq_info_dict)
 
-                H, W, _ = night_template_frames[0].shape
+        #         H, W, _ = night_template_frames[0].shape
  
-                night_data = TensorDict({'template_images': night_template_frames,
-                                   'template_anno': template_anno['bbox'],
-                                   'search_images': night_search_frames,
-                                   'search_anno': search_anno['bbox']
-                                })
-                # make data augmentation
+        #         night_data = TensorDict({'template_images': night_template_frames,
+        #                            'template_anno': template_anno['bbox'],
+        #                            'search_images': night_search_frames,
+        #                            'search_anno': search_anno['bbox']
+        #                         })
+        #         # make data augmentation
                 
-                night_data = self.processing(night_data)
-                valid = night_data['valid']
+        #         night_data = self.processing(night_data)
+        #         valid = night_data['valid']
                 
-            except:
-                valid = False
-        style_template_frames = [c for c,s in zip(day_template_frames, night_template_frames)]
-        style_search_frames = [c for c,s in zip(day_search_frames, night_search_frames)]
-        style_data = TensorDict({'template_images': style_template_frames,
-                                'template_anno': day_template_anno['bbox'],
-                                'search_images': style_search_frames,
-                                'search_anno': day_search_anno['bbox']
-                            })
-        style_data = self.processing(style_data)
+        #     except:
+        #         valid = False
+        # style_template_frames = [c for c,s in zip(day_template_frames, night_template_frames)]
+        # style_search_frames = [c for c,s in zip(day_search_frames, night_search_frames)]
+        # style_data = TensorDict({'template_images': style_template_frames,
+        #                         'template_anno': day_template_anno['bbox'],
+        #                         'search_images': style_search_frames,
+        #                         'search_anno': day_search_anno['bbox']
+        #                     })
+        # style_data = self.processing(style_data)
         # print("style data", style_data)
 
         data = TensorDict({
@@ -256,14 +256,14 @@ class TrackingSampler(torch.utils.data.Dataset):
             'day_template_anno': day_data['template_anno'],
             'day_search_images': day_data['search_images'],
             'day_search_anno': day_data['search_anno'],
-            'night_template_images': night_data['template_images'],
-            'night_template_anno': night_data['template_anno'],
-            'night_search_images': night_data['search_images'],
-            'night_search_anno': night_data['search_anno'],
-            'style_template_images': style_data['template_images'],
-            'style_search_images': style_data['search_images'],
-            'style_template_anno': style_data['template_anno'],
-            'style_search_anno': style_data['search_anno']
+            # 'night_template_images': night_data['template_images'],
+            # 'night_template_anno': night_data['template_anno'],
+            # 'night_search_images': night_data['search_images'],
+            # 'night_search_anno': night_data['search_anno'],
+            # 'style_template_images': style_data['template_images'],
+            # 'style_search_images': style_data['search_images'],
+            # 'style_template_anno': style_data['template_anno'],
+            # 'style_search_anno': style_data['search_anno']
         })
         
         return data
